@@ -26,6 +26,7 @@ def create_plot(df, plot_type, x_axis, y_axis=None):
     return fig
 # Streamlit app layout
 st.title('Comprehensive Data Analysis and Visualization Tool')
+st.write("By kumaran R")
 uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"])
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
