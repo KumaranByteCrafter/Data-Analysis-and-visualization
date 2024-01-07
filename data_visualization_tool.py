@@ -56,9 +56,12 @@ if uploaded_file is not None:
         duplicate_data = df.duplicated().sum()
         st.write(f"Duplicate Rows: {duplicate_data}")
     if st.sidebar.checkbox("View Unique Values"):
+        pd.set_option('display.max_colwidth', None)
         unique_column = st.sidebar.selectbox("Select Column for Unique Values", df.columns)
         st.subheader(f"Unique Values in '{unique_column}' Column")
-        st.write(df[unique_column].unique())
+        unique_values_df = pd.DataFrame(df[unique_column].unique(), columns=[unique_column])
+        max_table_height = 400
+        st.dataframe(unique_values_df, width=800, height=max_table_height)
     # Visualization
     st.sidebar.subheader("Data Visualization")
     plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
