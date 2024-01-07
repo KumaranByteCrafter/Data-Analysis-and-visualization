@@ -25,11 +25,10 @@ def create_plot(df, plot_type, x_axis, y_axis=None):
         fig = px.imshow(df.corr(), text_auto=True)
     return fig
 # Streamlit app layout
-st.title('Comprehensive Data Analysis and Visualization Tool')
-highlighted_text = "<div style='background-color:yellow; padding: 10px; border-radius: 5px;'>" \
-                   "I'm Kumaran, developed this project" \
-                   "</div>"
-st.markdown(highlighted_text, unsafe_allow_html=True)
+a = st.title('<div style='background-color:yellow; padding: 10px; border-radius: 5px;'>" \
+                Comprehensive Data Analysis and Visualization Tool \
+                </div>')
+st.markdown(a, unsafe_allow_html=True)
 uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"])
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
