@@ -21,8 +21,6 @@ def create_plot(df, plot_type, x_axis, y_axis=None):
         fig = px.pie(df, names=x_axis, values=y_axis)
     elif plot_type == 'Area Chart':
         fig = px.area(df, x=x_axis, y=y_axis)
-    elif plot_type == 'Heatmap':
-        fig = px.imshow(df.corr(), text_auto=True)
     return fig
 # Streamlit app layout
 highlighted_title = "<div style='background-color: #f0f2f6; padding: 10px; border-radius: 5px; text-align: center;'>" \
@@ -64,11 +62,11 @@ if uploaded_file is not None:
         st.dataframe(unique_values_df, width=800, height=max_table_height)
     # Visualization
     st.sidebar.subheader("Data Visualization")
-    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
+    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart']
     plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
     x_axis = st.selectbox('Select X-axis', df.columns)
     y_axis = None
-    if plot_choice not in ['Histogram', 'Pie Chart', 'Heatmap']:
+    if plot_choice not in ['Histogram', 'Pie Chart']:
         y_axis = st.selectbox('Select Y-axis', df.columns)
     if st.button('Generate Plot'):
         st.subheader(f"{plot_choice}")
