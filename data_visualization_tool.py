@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import numpy as np
 def preprocess_data(df):
     # Fill missing values and remove duplicates
     df.fillna(method='ffill', inplace=True)
