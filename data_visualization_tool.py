@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
-import seaborn as sns
 from scipy import stats
 
 def preprocess_data(df):
@@ -52,9 +51,12 @@ st.markdown(highlighted_title, unsafe_allow_html=True)
 # Adding developer credit
 st.markdown("<div style='text-align: center;'>Developed by Kumaran R</div>", unsafe_allow_html=True)
 
-uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"] or type=["xlsx"])
+uploaded_file = st.sidebar.file_uploader("Upload your file (CSV or Excel)", type=["csv", "xlsx"])
 if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
+    if uploaded_file.name.endswith('.xlsx'):
+        df = pd.read_excel(uploaded_file)
+    else:
+        df = pd.read_csv(uploaded_file)
     df = preprocess_data(df)
 
     # Data Exploration
