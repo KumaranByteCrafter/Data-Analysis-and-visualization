@@ -52,7 +52,7 @@ st.markdown(highlighted_title, unsafe_allow_html=True)
 # Adding developer credit
 st.markdown("<div style='text-align: center;'>Developed by Kumaran R</div>", unsafe_allow_html=True)
 
-uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"])
+uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"] or type=["xlsx"])
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     df = preprocess_data(df)
