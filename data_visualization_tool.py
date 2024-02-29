@@ -43,7 +43,10 @@ def create_plot(df, plot_type, x_axis, y_axis=None):
 # Main function
 def main():
     # App layout
-    st.title("Data Exploration and Visualization Tool")
+    highlighted_title = "<div style='background-color: #f0f2f6; padding: 10px; border-radius: 5px; text-align: center;'>" \
+                        "Comprehensive Data Analysis and Visualization Tool" \
+                        "</div>"
+    st.markdown(highlighted_title, unsafe_allow_html=True)
 
     st.sidebar.title("Upload File")
     uploaded_file = st.sidebar.file_uploader("Upload your CSV or Excel file", type=["csv", "xlsx"])
