@@ -5,13 +5,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 import plotly.graph_objects as go
-from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource
+from wordcloud import WordCloud
 from sklearn.datasets import make_classification, make_regression
-from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, mean_squared_error
 from sklearn.impute import KNNImputer
+from PIL import Image
 
 # Page layout
 st.set_page_config(layout="wide")
@@ -22,7 +22,7 @@ st.title("Advanced Data Analysis and Visualization Tool")
 # Sidebar
 st.sidebar.title("Settings")
 data_option = st.sidebar.radio("Select data option:", ("Upload CSV file", "Generate random data"))
-plot_option = st.sidebar.multiselect("Select plot types:", ["Histogram", "Box plot", "Scatter plot", "Pair plot", "Heatmap", "Countplot", "3D plot"])
+plot_option = st.sidebar.multiselect("Select plot types:", ["Histogram", "Scatter plot", "Line plot", "Box plot", "Pie chart", "Word cloud"])
 enable_ml = st.sidebar.checkbox("Enable Machine Learning")
 
 # Data analysis process checkboxes
@@ -99,36 +99,36 @@ if data_visualization_checked:
                 plt.figure(figsize=(8, 6))
                 sns.histplot(df[column], kde=True)
                 st.pyplot()
-            elif plot_type == "Box plot":
-                column = st.selectbox("Select column for box plot:", df.columns)
-                plt.figure(figsize=(8, 6))
-                sns.boxplot(y=df[column])
-                st.pyplot()
             elif plot_type == "Scatter plot":
                 x_column = st.selectbox("Select X-axis column:", df.columns)
                 y_column = st.selectbox("Select Y-axis column:", df.columns)
                 plt.figure(figsize=(8, 6))
                 sns.scatterplot(data=df, x=x_column, y=y_column)
                 st.pyplot()
-            elif plot_type == "Pair plot":
-                plt.figure(figsize=(10, 8))
-                sns.pairplot(df)
-                st.pyplot()
-            elif plot_type == "Heatmap":
-                plt.figure(figsize=(10, 8))
-                sns.heatmap(df.corr(), annot=True, cmap='coolwarm')
-                st.pyplot()
-            elif plot_type == "Countplot":
-                column = st.selectbox("Select column for countplot:", df.columns)
-                plt.figure(figsize=(8, 6))
-                sns.countplot(data=df, x=column)
-                st.pyplot()
-            elif plot_type == "3D plot":
+            elif plot_type == "Line plot":
                 x_column = st.selectbox("Select X-axis column:", df.columns)
                 y_column = st.selectbox("Select Y-axis column:", df.columns)
-                z_column = st.selectbox("Select Z-axis column:", df.columns)
-                fig = go.Figure(data=[go.Scatter3d(x=df[x_column], y=df[y_column], z=df[z_column], mode='markers')])
+                plt.figure(figsize=(8, 6))
+                sns.lineplot(data=df, x=x_column, y=y_column)
+                st.pyplot()
+            elif plot_type == "Box plot":
+                column = st.selectbox("Select column for box plot:", df.columns)
+                plt.figure(figsize=(8, 6))
+                sns.boxplot(y=df[column])
+                st.pyplot()
+            elif plot_type == "Pie chart":
+                column = st.selectbox("Select column for pie chart:", df.columns)
+                pie_data = df[column].value_counts()
+                fig = go.Figure(data=[go.Pie(labels=pie_data.index, values=pie_data.values)])
                 st.plotly_chart(fig)
+            elif plot_type == "Word cloud":
+                text_column = st.selectbox("Select text column for word cloud:", df.columns)
+                text = " ".join(df[text_column].dropna())
+                wordcloud = WordCloud(width=800, height=400, background_color ='white').generate(text)
+                plt.figure(figsize=(10, 5))
+                plt.imshow(wordcloud, interpolation='bilinear')
+                plt.axis('off')
+                st.pyplot()
 
 # Advanced Plot Customization
 if advanced_plot_customization_checked:
