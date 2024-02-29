@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
+import seaborn as sns
 from scipy import stats
 
 def preprocess_data(df):
@@ -31,8 +32,6 @@ def create_plot(df, plot_type, x_axis, y_axis=None):
             fig = px.area(df, x=x_axis, y=y_axis)
         elif plot_type == 'Violin Plot':
             fig = px.violin(df, x=x_axis, y=y_axis)
-        elif plot_type == 'Boxen Plot':
-            fig = px.box(df, x=x_axis, y=y_axis)
         elif plot_type == 'Boxen Plot':
             fig = px.box(df, x=x_axis, y=y_axis)
         elif plot_type == 'Scatter Matrix':
@@ -103,16 +102,6 @@ if uploaded_file is not None:
             st.write(df.iloc[outliers])
         else:
             st.write("No outliers detected in the selected column.")
-
-    # Data Analysis
-    st.sidebar.subheader("Data Analysis")
-    if st.sidebar.checkbox("Perform T-test"):
-        st.subheader("T-test")
-        st.write("Select two numeric columns to perform a T-test.")
-        ttest_col1 = st.selectbox("Select First Numeric Column", df.select_dtypes(include=np.number).columns)
-        ttest_col2 = st.selectbox("Select Second Numeric Column", df.select_dtypes(include=np.number).columns)
-        ttest_result = stats.ttest_ind(df[ttest_col1], df[ttest_col2])
-        st.write("T-test p-value:", ttest_result.pvalue)
 
     # Visualization
     st.sidebar.subheader("Data Visualization")
