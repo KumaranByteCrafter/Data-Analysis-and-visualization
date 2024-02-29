@@ -25,6 +25,15 @@ data_option = st.sidebar.radio("Select data option:", ("Upload CSV file", "Gener
 plot_option = st.sidebar.multiselect("Select plot types:", ["Histogram", "Box plot", "Scatter plot", "Pair plot", "Heatmap", "Countplot", "3D plot"])
 enable_ml = st.sidebar.checkbox("Enable Machine Learning")
 
+# Data analysis process checkboxes
+st.sidebar.subheader("Data Analysis Processes")
+data_exploration_checked = st.sidebar.checkbox("Data Exploration", value=True)
+data_cleaning_checked = st.sidebar.checkbox("Data Cleaning", value=True)
+data_visualization_checked = st.sidebar.checkbox("Data Visualization", value=True)
+advanced_plot_customization_checked = st.sidebar.checkbox("Advanced Plot Customization", value=False)
+data_filtering_checked = st.sidebar.checkbox("Data Filtering", value=False)
+missing_value_imputation_checked = st.sidebar.checkbox("Missing Value Imputation", value=False)
+
 # Main content
 if data_option == "Upload CSV file":
     uploaded_file = st.sidebar.file_uploader("Upload CSV file", type=["csv"])
@@ -53,17 +62,15 @@ else:
         df['Target'] = y
 
 # Data exploration
-if "Data Exploration" in st.session_state:
+if data_exploration_checked:
     st.subheader("Data Exploration")
     st.write(df.head())
     st.write("Shape of the data:", df.shape)
     st.write("Summary statistics:")
     st.write(df.describe())
-else:
-    st.session_state["Data Exploration"] = True
 
 # Data cleaning
-if "Data Cleaning" in st.session_state:
+if data_cleaning_checked:
     st.subheader("Data Cleaning")
     missing_values = df.isnull().sum()
     if missing_values.any():
@@ -80,11 +87,9 @@ if "Data Cleaning" in st.session_state:
             imputer = KNNImputer()
             df_filled = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
             st.write(df_filled)
-else:
-    st.session_state["Data Cleaning"] = True
 
 # Data visualization
-if "Data Visualization" in st.session_state:
+if data_visualization_checked:
     st.subheader("Data Visualization")
     if plot_option:
         for plot_type in plot_option:
@@ -124,60 +129,46 @@ if "Data Visualization" in st.session_state:
                 z_column = st.selectbox("Select Z-axis column:", df.columns)
                 fig = go.Figure(data=[go.Scatter3d(x=df[x_column], y=df[y_column], z=df[z_column], mode='markers')])
                 st.plotly_chart(fig)
-else:
-    st.session_state["Data Visualization"] = True
-
-# Machine Learning
-if enable_ml:
-    st.subheader("Machine Learning")
-    if st.checkbox("Train a basic machine learning model"):
-        X = df.drop(columns=["Target"])
-        y = df["Target"]
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-        model = LinearRegression()
-        model.fit(X_train, y_train)
-        y_pred = model.predict(X_test)
-
-        st.write("Mean Squared Error:", mean_squared_error(y_test, y_pred))
-        st.write("R-squared:", r2_score(y_test, y_pred))
 
 # Advanced Plot Customization
-st.subheader("Advanced Plot Customization")
-if st.checkbox("Customize plot aesthetics"):
-    # Example: Customize scatter plot with selected options
-    marker_style = st.selectbox("Marker style:", ["o", "s", "D"])
-    line_style = st.selectbox("Line style:", ["-", "--", "-.", ":"])
-    color = st.color_picker("Marker color:", "#ff5733")
+if advanced_plot_customization_checked:
+    st.subheader("Advanced Plot Customization")
+    if st.checkbox("Customize plot aesthetics"):
+        # Example: Customize scatter plot with selected options
+        marker_style = st.selectbox("Marker style:", ["o", "s", "D"])
+        line_style = st.selectbox("Line style:", ["-", "--", "-.", ":"])
+        color = st.color_picker("Marker color:", "#ff5733")
 
-    plt.figure(figsize=(8, 6))
-    plt.plot(df[x_column], df[y_column], marker=marker_style, linestyle=line_style, color=color)
-    plt.xlabel(x_column)
-    plt.ylabel(y_column)
-    plt.title("Customized Scatter Plot")
-    st.pyplot()
+        plt.figure(figsize=(8, 6))
+        plt.plot(df[x_column], df[y_column], marker=marker_style, linestyle=line_style, color=color)
+        plt.xlabel(x_column)
+        plt.ylabel(y_column)
+        plt.title("Customized Scatter Plot")
+        st.pyplot()
 
 # Data Filtering
-st.subheader("Data Filtering")
-if st.checkbox("Filter data"):
-    # Example: Filter data based on user input for a specific column
-    filter_column = st.selectbox("Select column to filter:", df.columns)
-    filter_value = st.text_input("Enter filter value:")
-    filtered_df = df[df[filter_column] == filter_value]
-    st.write(filtered_df)
+if data_filtering_checked:
+    st.subheader("Data Filtering")
+    if st.checkbox("Filter data"):
+        # Example: Filter data based on user input for a specific column
+        filter_column = st.selectbox("Select column to filter:", df.columns)
+        filter_value = st.text_input("Enter filter value:")
+        filtered_df = df[df[filter_column] == filter_value]
+        st.write(filtered_df)
 
 # Missing Value Imputation
-st.subheader("Missing Value Imputation")
-if st.checkbox("Impute missing values"):
-    # Example: Impute missing values using mean
-    missing_cols = df.columns[df.isnull().any()]
-    if missing_cols.any():
-        impute_method = st.selectbox("Select imputation method:", ["Mean", "Median", "KNN"])
-        if impute_method == "Mean":
-            df.fillna(df.mean(), inplace=True)
-        elif impute_method == "Median":
-            df.fillna(df.median(), inplace=True)
-        elif impute_method == "KNN":
-            imputer = KNNImputer()
-            df_filled = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
-            st.write(df_filled)
+if missing_value_imputation_checked:
+    st.subheader("Missing Value Imputation")
+    if st.checkbox("Impute missing values"):
+        # Example: Impute missing values using mean
+        missing_cols = df.columns[df.isnull().any()]
+        if missing_cols.any():
+            impute_method = st.selectbox("Select imputation method:", ["Mean", "Median", "KNN"])
+            if impute_method == "Mean":
+                df.fillna(df.mean(), inplace=True)
+            elif impute_method == "Median":
+                df.fillna(df.median(), inplace=True)
+            elif impute_method == "KNN":
+                imputer = KNNImputer()
+                df_filled = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+                st.write(df_filled)
