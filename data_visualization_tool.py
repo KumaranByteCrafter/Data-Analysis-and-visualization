@@ -2,11 +2,14 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
+from scipy import stats
+
 def preprocess_data(df):
     # Fill missing values and remove duplicates
     df.fillna(method='ffill', inplace=True)
     df.drop_duplicates(inplace=True)
     return df
+
 def create_plot(df, plot_type, x_axis, y_axis=None):
     if plot_type == 'Bar Chart':
         fig = px.bar(df, x=x_axis, y=y_axis)
@@ -26,17 +29,21 @@ def create_plot(df, plot_type, x_axis, y_axis=None):
     elif plot_type == 'Area Chart':
         fig = px.area(df, x=x_axis, y=y_axis)
     return fig
+
 # Streamlit app layout
 highlighted_title = "<div style='background-color: #f0f2f6; padding: 10px; border-radius: 5px; text-align: center;'>" \
                     "Comprehensive Data Analysis and Visualization Tool" \
                     "</div>"
 st.markdown(highlighted_title, unsafe_allow_html=True)
+
 # Adding developer credit
 st.markdown("<div style='text-align: center;'>Developed by Kumaran R</div>", unsafe_allow_html=True)
+
 uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"])
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     df = preprocess_data(df)
+
     # Data Exploration
     st.sidebar.subheader("Data Exploration")
     if st.sidebar.checkbox("View Data Head"):
@@ -63,6 +70,38 @@ if uploaded_file is not None:
         unique_values_df = pd.DataFrame(df[unique_column].unique(), columns=[unique_column])
         max_table_height = 400
         st.dataframe(unique_values_df, width=800, height=max_table_height)
+    if st.sidebar.checkbox("View Correlation Matrix"):
+        st.subheader("Correlation Matrix")
+        st.write(df.corr())
+    if st.sidebar.checkbox("View Value Counts"):
+        st.subheader("Value Counts")
+        value_count_column = st.sidebar.selectbox("Select Column for Value Counts", df.columns)
+        st.write(df[value_count_column].value_counts())
+    if st.sidebar.checkbox("View Pairplot (for smaller datasets)"):
+        st.subheader("Pairplot")
+        st.write(px.pairplot(df))
+    if st.sidebar.checkbox("Detect Outliers"):
+        st.subheader("Outlier Detection")
+        outlier_column = st.sidebar.selectbox("Select Column for Outlier Detection", df.select_dtypes(include=np.number).columns)
+        z_scores = np.abs(stats.zscore(df[outlier_column]))
+        threshold = 3
+        outliers = np.where(z_scores > threshold)[0]
+        if len(outliers) > 0:
+            st.write("Outliers detected in the selected column:")
+            st.write(df.iloc[outliers])
+        else:
+            st.write("No outliers detected in the selected column.")
+
+    # Data Analysis
+    st.sidebar.subheader("Data Analysis")
+    if st.sidebar.checkbox("Perform T-test"):
+        st.subheader("T-test")
+        st.write("Select two numeric columns to perform a T-test.")
+        ttest_col1 = st.selectbox("Select First Numeric Column", df.select_dtypes(include=np.number).columns)
+        ttest_col2 = st.selectbox("Select Second Numeric Column", df.select_dtypes(include=np.number).columns)
+        ttest_result = stats.ttest_ind(df[ttest_col1], df[ttest_col2])
+        st.write("T-test p-value:", ttest_result.pvalue)
+
     # Visualization
     st.sidebar.subheader("Data Visualization")
     plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart','Heatmap']
