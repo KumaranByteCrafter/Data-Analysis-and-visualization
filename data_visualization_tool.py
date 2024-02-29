@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 import plotly.express as px
 import numpy as np
 from scipy import stats
@@ -88,7 +90,8 @@ if uploaded_file is not None:
         st.write(df[value_count_column].value_counts())
     if st.sidebar.checkbox("View Pairplot (for smaller datasets)"):
         st.subheader("Pairplot")
-        st.write(px.pairplot(df))
+        sns.pairplot(df)
+        st.pyplot()
     if st.sidebar.checkbox("Detect Outliers"):
         st.subheader("Outlier Detection")
         outlier_column = st.sidebar.selectbox("Select Column for Outlier Detection", df.select_dtypes(include=np.number).columns)
