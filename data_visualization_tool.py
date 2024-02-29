@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 import plotly.express as px
 import numpy as np
 from scipy import stats
@@ -35,6 +33,12 @@ def create_plot(df, plot_type, x_axis, y_axis=None):
             fig = px.violin(df, x=x_axis, y=y_axis)
         elif plot_type == 'Boxen Plot':
             fig = px.box(df, x=x_axis, y=y_axis)
+        elif plot_type == 'Boxen Plot':
+            fig = px.box(df, x=x_axis, y=y_axis)
+        elif plot_type == 'Scatter Matrix':
+            fig = px.scatter_matrix(df)
+        elif plot_type == 'Pair Density Plot':
+            fig = px.density_contour(df, x=x_axis, y=y_axis)
         return fig
     except Exception as e:
         st.error(f"An error occurred: {e}")
@@ -88,10 +92,6 @@ if uploaded_file is not None:
         st.subheader("Value Counts")
         value_count_column = st.sidebar.selectbox("Select Column for Value Counts", df.columns)
         st.write(df[value_count_column].value_counts())
-    if st.sidebar.checkbox("View Pairplot (for smaller datasets)"):
-        st.subheader("Pairplot")
-        sns.pairplot(df)
-        st.pyplot()
     if st.sidebar.checkbox("Detect Outliers"):
         st.subheader("Outlier Detection")
         outlier_column = st.sidebar.selectbox("Select Column for Outlier Detection", df.select_dtypes(include=np.number).columns)
@@ -116,7 +116,7 @@ if uploaded_file is not None:
 
     # Visualization
     st.sidebar.subheader("Data Visualization")
-    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap', 'Violin Plot', 'Boxen Plot']
+    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap', 'Violin Plot', 'Boxen Plot', 'Scatter Matrix', 'Pair Density Plot']
     plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
     x_axis = st.selectbox('Select X-axis', df.columns)
     y_axis = None
