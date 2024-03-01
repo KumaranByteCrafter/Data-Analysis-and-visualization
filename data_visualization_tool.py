@@ -1,271 +1,219 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
-from scipy import stats
-import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.cluster import KMeans
+import seaborn as sns
 
-# Function to preprocess data
-def preprocess_data(df):
-    df.fillna(method='ffill', inplace=True)
-    df.drop_duplicates(inplace=True)
-    return df
+# Page layout
+st.set_page_config(layout="wide")
 
-# Function to create different types of plots
-def create_plot(df, plot_type, x_axis, y_axis=None):
-    if plot_type == 'Bar Chart':
-        fig = px.bar(df, x=x_axis, y=y_axis)
-    elif plot_type == 'Line Chart':
-        fig = px.line(df, x=x_axis, y=y_axis)
-    elif plot_type == 'Scatter Plot':
-        fig = px.scatter(df, x=x_axis, y=y_axis)
-    elif plot_type == 'Histogram':
-        fig = px.histogram(df, x=x_axis)
-    elif plot_type == 'Box Plot':
-        fig = px.box(df, x=x_axis, y=y_axis)
-    elif plot_type == 'Pie Chart':
-        fig = px.pie(df, names=x_axis, values=y_axis)
-    elif plot_type == 'Heatmap':
-        numeric_df = df.select_dtypes(include=[np.number])
-        fig = px.imshow(numeric_df.corr(), text_auto=True)
-    elif plot_type == 'Area Chart':
-        fig = px.area(df, x=x_axis, y=y_axis)
-    elif plot_type == 'Violin Plot':
-        fig = px.violin(df, x=x_axis, y=y_axis)
-    elif plot_type == 'Boxen Plot':
-        fig = px.box(df, x=x_axis, y=y_axis)
-    elif plot_type == 'Scatter Matrix':
-        fig = px.scatter_matrix(df)
-    elif plot_type == 'Pair Density Plot':
-        fig = px.density_contour(df, x=x_axis, y=y_axis)
-    return fig
+# Title
+st.title("Advanced Data Analysis and Visualization Tool")
 
-# Function for descriptive analysis
-def descriptive_analysis(df):
-    return df.describe()
+# Sidebar
+st.sidebar.title("Settings")
+data_option = st.sidebar.radio("Select data option:", ("Upload CSV file", "Generate random data"))
+plot_option = st.sidebar.multiselect("Select plot types:", ["Histogram", "Box plot", "Scatter plot", "Pair plot", "Heatmap", "Countplot", "3D plot"])
+enable_ml = st.sidebar.checkbox("Enable Machine Learning")
 
-# Function for diagnostic analysis
-def diagnostic_analysis(df):
-    return df.corr()
+# Data analysis process checkboxes
+st.sidebar.subheader("Data Analysis Processes")
+data_exploration_checked = st.sidebar.checkbox("Data Exploration", value=True)
+data_cleaning_checked = st.sidebar.checkbox("Data Cleaning", value=True)
+data_visualization_checked = st.sidebar.checkbox("Data Visualization", value=True)
+advanced_plot_customization_checked = st.sidebar.checkbox("Advanced Plot Customization", value=False)
+data_filtering_checked = st.sidebar.checkbox("Data Filtering", value=False)
+missing_value_imputation_checked = st.sidebar.checkbox("Missing Value Imputation", value=False)
 
-# Function for predictive analysis
-def predictive_analysis(df):
-    X = df.drop(columns=['target'])
-    y = df['target']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    clf = RandomForestClassifier()
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
-    return accuracy
-
-# Function for prescriptive analysis
-def prescriptive_analysis(df):
-    return "Based on the analysis, we recommend focusing marketing efforts on the younger demographic as they show a higher response rate."
-
-# Function for outlier detection
-def detect_outliers(df, column):
-    z_scores = np.abs(stats.zscore(df[column]))
-    threshold = 3
-    outliers = np.where(z_scores > threshold)[0]
-    if len(outliers) > 0:
-        return df.iloc[outliers]
-    else:
-        return "No outliers detected in the selected column."
-
-# Function for data preprocessing
-def data_preprocessing(df):
-    # Example: Standardize numerical features
-    scaler = StandardScaler()
-    df[df.select_dtypes(include=['float64', 'int64']).columns] = scaler.fit_transform(df.select_dtypes(include=['float64', 'int64']))
-    return df
-
-# Function for feature engineering
-def feature_engineering(df):
-    # Example: Creating new feature based on existing ones
-    df['new_feature'] = df['feature1'] + df['feature2']
-    return df
-
-# Function for model selection and evaluation
-def model_selection_evaluation(df):
-    # Example: Train a Random Forest Classifier and evaluate its performance
-    X = df.drop(columns=['target'])
-    y = df['target']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    clf = RandomForestClassifier()
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
-    return accuracy
-
-# Function for advanced visualization
-def advanced_visualization(df):
-    # Example: Pairplot with Seaborn
-    sns.pairplot(df)
-    plt.show()
-
-# Function for time series analysis
-def time_series_analysis(df):
-    # Example: Extracting time components from a datetime feature
-    df['year'] = df['date'].dt.year
-    df['month'] = df['date'].dt.month
-    df['day'] = df['date'].dt.day
-    return df
-
-# Function for natural language processing
-def nlp_analysis(df):
-    # Example: CountVectorizer for text data
-    vectorizer = CountVectorizer()
-    X = vectorizer.fit_transform(df['text_column'])
-    return X
-
-# Function for clustering and dimensionality reduction
-def clustering_dimensionality_reduction(df):
-    # Example: KMeans clustering and PCA for dimensionality reduction
-    kmeans = KMeans(n_clusters=3)
-    kmeans.fit(df)
-    df['cluster'] = kmeans.labels_
-    
-    pca = PCA(n_components=2)
-    reduced_features = pca.fit_transform(df)
-    
-    return df, reduced_features
-
-# Main function
-def main():
-    st.title("Data Exploration and Analysis Tool")
-    st.sidebar.title("Upload File")
-    uploaded_file = st.sidebar.file_uploader("Upload your CSV or Excel file", type=["csv", "xlsx"])
-
+# Main content
+if data_option == "Upload CSV file":
+    uploaded_file = st.sidebar.file_uploader("Upload CSV file", type=["csv"])
     if uploaded_file is not None:
-        if uploaded_file.type == 'application/vnd.ms-excel':
-            st.error("Sorry, Excel files in .xls format are not supported. Please convert the file to .xlsx format and try again.")
-        else:
-            if uploaded_file.name.endswith('.xlsx'):
-                df = pd.read_excel(uploaded_file)
-            else:
-                df = pd.read_csv(uploaded_file)
+        # Load data
+        @st.cache
+        def load_data(file):
+            return pd.read_csv(file)
 
-            df = preprocess_data(df)
+        df = load_data(uploaded_file)
 
-            st.sidebar.subheader("Data Exploration Options")
-            exploration_options = st.sidebar.multiselect("Select Data Exploration Options", 
-                                                          ["Data Head", "Data Description", "Data Types", 
-                                                           "Missing Values", "Duplicate Data", "Unique Values", 
-                                                           "Correlation Matrix", "Value Counts", "Detect Outliers"])
+else:
+    st.sidebar.subheader("Generate Random Data")
+    data_type = st.sidebar.radio("Select data type:", ("Classification", "Regression"))
+    if data_type == "Classification":
+        n_samples = st.sidebar.slider("Number of samples:", min_value=100, max_value=1000, step=100)
+        n_features = st.sidebar.slider("Number of features:", min_value=1, max_value=10, step=1)
+        X, y = make_classification(n_samples=n_samples, n_features=n_features, random_state=42)
+        df = pd.DataFrame(X, columns=[f"Feature {i}" for i in range(1, n_features+1)])
+        df['Target'] = y
+    else:
+        n_samples = st.sidebar.slider("Number of samples:", min_value=100, max_value=1000, step=100)
+        n_features = st.sidebar.slider("Number of features:", min_value=1, max_value=10, step=1)
+        X, y = make_regression(n_samples=n_samples, n_features=n_features, random_state=42)
+        df = pd.DataFrame(X, columns=[f"Feature {i}" for i in range(1, n_features+1)])
+        df['Target'] = y
 
-            if "Data Head" in exploration_options:
-                st.subheader("Data Head (First 5 Rows)")
-                st.dataframe(df.head())
+# Data exploration
+if data_exploration_checked:
+    st.subheader("Data Exploration")
+    st.write(df.head())
+    st.write("Shape of the data:", df.shape)
+    st.write("Summary statistics:")
+    st.write(df.describe())
 
-            if "Data Description" in exploration_options:
-                st.subheader("Data Description (Statistical Summary)")
-                st.dataframe(descriptive_analysis(df))
+# Data cleaning
+if data_cleaning_checked:
+    st.subheader("Data Cleaning")
+    missing_values = df.isnull().sum()
+    if missing_values.any():
+        st.write("Missing values:")
+        st.write(missing_values)
+        fill_method = st.selectbox("Select fill method:", ["Drop missing values", "Fill with mean", "Fill with median", "KNN"])
+        if fill_method == "Drop missing values":
+            df.dropna(inplace=True)
+        elif fill_method == "Fill with mean":
+            df.fillna(df.mean(), inplace=True)
+        elif fill_method == "Fill with median":
+            df.fillna(df.median(), inplace=True)
+        elif fill_method == "KNN":
+            imputer = KNNImputer()
+            df_filled = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+            st.write(df_filled)
 
-            if "Data Types" in exploration_options:
-                st.subheader("Data Types")
-                st.dataframe(df.dtypes.astype(str).to_frame('Data Type'))
+# Data visualization
+if data_visualization_checked:
+    st.subheader("Data Visualization")
+    if plot_option:
+        for plot_type in plot_option:
+            st.write(plot_type)
+            if plot_type == "Histogram":
+                column = st.selectbox("Select column for histogram:", df.columns)
+                plt.figure(figsize=(8, 6))
+                sns.histplot(df[column], kde=True)
+                st.pyplot()
+            elif plot_type == "Box plot":
+                column = st.selectbox("Select column for box plot:", df.columns)
+                plt.figure(figsize=(8, 6))
+                sns.boxplot(y=df[column])
+                st.pyplot()
+            elif plot_type == "Scatter plot":
+                x_column = st.selectbox("Select X-axis column:", df.columns)
+                y_column = st.selectbox("Select Y-axis column:", df.columns)
+                plt.figure(figsize=(8, 6))
+                sns.scatterplot(data=df, x=x_column, y=y_column)
+                st.pyplot()
+            elif plot_type == "Pair plot":
+                plt.figure(figsize=(10, 8))
+                sns.pairplot(df)
+                st.pyplot()
+            elif plot_type == "Heatmap":
+                plt.figure(figsize=(10, 8))
+                sns.heatmap(df.corr(), annot=True, cmap='coolwarm')
+                st.pyplot()
+            elif plot_type == "Countplot":
+                column = st.selectbox("Select column for countplot:", df.columns)
+                plt.figure(figsize=(8, 6))
+                sns.countplot(data=df, x=column)
+                st.pyplot()
+            elif plot_type == "3D plot":
+                x_column = st.selectbox("Select X-axis column:", df.columns)
+                y_column = st.selectbox("Select Y-axis column:", df.columns)
+                z_column = st.selectbox("Select Z-axis column:", df.columns)
+                fig = go.Figure(data=[go.Scatter3d(x=df[x_column], y=df[y_column], z=df[z_column], mode='markers')])
+                st.plotly_chart(fig)
 
-            if "Missing Values" in exploration_options:
-                st.subheader("Missing Data Report")
-                missing_data = df.isnull().sum()
-                st.dataframe(missing_data.to_frame('Missing Values'))
+# Advanced Plot Customization
+if advanced_plot_customization_checked:
+    st.subheader("Advanced Plot Customization")
+    if st.checkbox("Customize plot aesthetics"):
+        # Example: Customize scatter plot with selected options
+        marker_style = st.selectbox("Marker style:", ["o", "s", "D"])
+        line_style = st.selectbox("Line style:", ["-", "--", "-.", ":"])
+        color = st.color_picker("Marker color:", "#ff5733")
 
-            if "Duplicate Data" in exploration_options:
-                st.subheader("Duplicate Data Report")
-                duplicate_data = df.duplicated().sum()
-                st.write(f"Duplicate Rows: {duplicate_data}")
+        plt.figure(figsize=(8, 6))
+        plt.plot(df[x_column], df[y_column], marker=marker_style, linestyle=line_style, color=color)
+        plt.xlabel(x_column)
+        plt.ylabel(y_column)
+        plt.title("Customized Scatter Plot")
+        st.pyplot()
 
-            if "Unique Values" in exploration_options:
-                pd.set_option('display.max_colwidth', None)
-                unique_column = st.sidebar.selectbox("Select Column for Unique Values", df.columns)
-                st.subheader(f"Unique Values in '{unique_column}' Column")
-                unique_values_df = pd.DataFrame(df[unique_column].unique(), columns=[unique_column])
-                max_table_height = 400
-                st.dataframe(unique_values_df, width=800, height=max_table_height)
+# Data Filtering
+if data_filtering_checked:
+    st.subheader("Data Filtering")
+    if st.checkbox("Filter data"):
+        # Example: Filter data based on user input for a specific column
+        filter_column = st.selectbox("Select column to filter:", df.columns)
+        filter_value = st.text_input("Enter filter value:")
+        filtered_df = df[df[filter_column] == filter_value]
+        st.write(filtered_df)
 
-            if "Correlation Matrix" in exploration_options:
-                st.subheader("Correlation Matrix")
-                st.write(diagnostic_analysis(df))
+# Missing Value Imputation
+if missing_value_imputation_checked:
+    st.subheader("Missing Value Imputation")
+    if st.checkbox("Impute missing values"):
+        # Example: Impute missing values using mean
+        missing_cols = df.columns[df.isnull().any()]
+        if missing_cols.any():
+            impute_method = st.selectbox("Select imputation method:", ["Mean", "Median", "KNN"])
+            if impute_method == "Mean":
+                df.fillna(df.mean(), inplace=True)
+            elif impute_method == "Median":
+                df.fillna(df.median(), inplace=True)
+            elif impute_method == "KNN":
+                imputer = KNNImputer()
+                df_filled = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+                st.write(df_filled)
 
-            if "Value Counts" in exploration_options:
-                st.subheader("Value Counts")
-                value_count_column = st.sidebar.selectbox("Select Column for Value Counts", df.columns)
-                st.write(df[value_count_column].value_counts())
+# Additional functionalities
+if st.button("Show DataFrame Head"):
+    st.write(df.head())
 
-            if "Detect Outliers" in exploration_options:
-                st.subheader("Outlier Detection")
-                outlier_column = st.sidebar.selectbox("Select Column for Outlier Detection", df.select_dtypes(include=np.number).columns)
-                st.write(detect_outliers(df, outlier_column))
+if st.button("Show DataFrame Info"):
+    st.write(df.info())
 
-            st.sidebar.subheader("Data Analysis Options")
-            analysis_options = st.sidebar.multiselect("Select Data Analysis Options", 
-                                                      ["Descriptive Analysis", "Predictive Analysis", "Prescriptive Analysis", 
-                                                       "Feature Engineering", "Advanced Visualization", "Time Series Analysis", 
-                                                       "Natural Language Processing", "Clustering and Dimensionality Reduction"])
+if st.button("Show DataFrame Summary Statistics"):
+    st.write(df.describe())
 
-            if "Descriptive Analysis" in analysis_options:
-                st.subheader("Descriptive Analysis")
-                st.write(descriptive_analysis(df))
+if st.button("Check for Duplicates"):
+    duplicate_count = df.duplicated().sum()
+    st.write("Number of duplicates:", duplicate_count)
 
-            if "Predictive Analysis" in analysis_options:
-                st.subheader("Predictive Analysis")
-                st.write("Model Accuracy:", predictive_analysis(df))
+if st.button("Show Unique Values"):
+    unique_values = df['Category'].unique()
+    st.write("Unique values:", unique_values)
 
-            if "Prescriptive Analysis" in analysis_options:
-                st.subheader("Prescriptive Analysis")
-                st.write(prescriptive_analysis(df))
+if st.button("Find Null Values"):
+    null_values = df.isnull().sum()
+    st.write("Null values:", null_values)
 
-            if "Feature Engineering" in analysis_options:
-                st.subheader("Feature Engineering")
-                st.write("Example: Creating new feature based on existing ones")
-                st.write(feature_engineering(df))
+if st.button("Replace Null Values"):
+    df.replace(np.nan, 0, inplace=True)
+    st.write("Null values replaced with 0.")
+    st.write(df)
 
-            if "Advanced Visualization" in analysis_options:
-                st.subheader("Advanced Visualization")
-                st.write("Example: Pairplot with Seaborn")
-                advanced_visualization(df)
+if st.button("Filter Data"):
+    filtered_data = df[df['Value'] > 30]
+    st.write("Filtered data:")
+    st.write(filtered_data)
 
-            if "Time Series Analysis" in analysis_options:
-                st.subheader("Time Series Analysis")
-                st.write("Example: Extracting time components from a datetime feature")
-                st.write(time_series_analysis(df))
+if st.button("Bar Plot"):
+    plt.figure(figsize=(8, 6))
+    plt.bar(df['Category'], df['Value'])
+    plt.xlabel('Category')
+    plt.ylabel('Value')
+    plt.title('Bar Plot')
+    st.pyplot()
 
-            if "Natural Language Processing" in analysis_options:
-                st.subheader("Natural Language Processing")
-                st.write("Example: CountVectorizer for text data")
-                st.write(nlp_analysis(df))
+if st.button("Pie Chart"):
+    plt.figure(figsize=(8, 6))
+    plt.pie(df['Value'], labels=df['Category'], autopct='%1.1f%%')
+    plt.title('Pie Chart')
+    st.pyplot()
 
-            if "Clustering and Dimensionality Reduction" in analysis_options:
-                st.subheader("Clustering and Dimensionality Reduction")
-                st.write("Example: KMeans clustering and PCA for dimensionality reduction")
-                clustered_df, reduced_features = clustering_dimensionality_reduction(df)
-                st.write(clustered_df.head())
-                st.write(reduced_features)
-
-            # Visualization
-            st.sidebar.subheader("Data Visualization Options")
-            plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 
-                          'Area Chart', 'Heatmap', 'Violin Plot', 'Boxen Plot', 'Scatter Matrix', 'Pair Density Plot']
-            plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
-            x_axis = st.sidebar.selectbox('Select X-axis', df.columns)
-            y_axis = None
-            if plot_choice not in ['Histogram', 'Pie Chart', 'Heatmap']:
-                y_axis = st.sidebar.selectbox('Select Y-axis', df.columns)
-            
-            if st.sidebar.button('Generate Plot'):
-                st.subheader(f"{plot_choice}")
-                fig = create_plot(df, plot_choice, x_axis, y_axis)
-                if fig:
-                    st.plotly_chart(fig, use_container_width=True)
-
-if __name__ == "__main__":
-    main()
+if st.button("Line Plot"):
+    plt.figure(figsize=(8, 6))
+    plt.plot(df['Category'], df['Value'], marker='o')
+    plt.xlabel('Category')
+    plt.ylabel('Value')
+    plt.title('Line Plot')
+    st.pyplot()
