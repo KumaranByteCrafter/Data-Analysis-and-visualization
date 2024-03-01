@@ -49,90 +49,91 @@ def main():
     st.markdown(highlighted_title, unsafe_allow_html=True)
 
     st.sidebar.title("Upload File")
-    uploaded_file = st.sidebar.file_uploader("Upload your CSV or Excel file", type=["csv", "xlsx"])
+    uploaded_file = st.sidebar.file_uploader("Upload your CSV, Excel (.xlsx, .xls) file", type=["csv", "xlsx", "xls"])
 
     if uploaded_file is not None:
-        if uploaded_file.type == 'application/vnd.ms-excel':
-            st.error("Sorry, Excel files in .xls format are not supported. Please convert the file to .xlsx format and try again.")
-        else:
-            if uploaded_file.name.endswith('.xlsx'):
+        # Use a try-except block to handle file reading errors
+        try:
+            if uploaded_file.name.endswith('.xlsx') or uploaded_file.name.endswith('.xls'):
                 df = pd.read_excel(uploaded_file)
             else:
                 df = pd.read_csv(uploaded_file)
             df = preprocess_data(df)
+        except Exception as e:
+            st.error(f"An error occurred while reading the file: {e}")
+            return
 
-            st.sidebar.subheader("Data Exploration Options")
-            exploration_options = st.sidebar.multiselect("Select Data Exploration Options", 
-                                                          ["Data Head", "Data Description", "Data Types", 
-                                                           "Missing Values", "Duplicate Data", "Unique Values", 
-                                                           "Correlation Matrix", "Value Counts", "Detect Outliers"])
+        st.sidebar.subheader("Data Exploration Options")
+        exploration_options = st.sidebar.multiselect("Select Data Exploration Options", 
+                                                      ["Data Head", "Data Description", "Data Types", 
+                                                       "Missing Values", "Duplicate Data", "Unique Values", 
+                                                       "Correlation Matrix", "Value Counts", "Detect Outliers"])
 
-            if "Data Head" in exploration_options:
-                st.subheader("Data Head (First 5 Rows)")
-                st.dataframe(df.head())
+        if "Data Head" in exploration_options:
+            st.subheader("Data Head (First 5 Rows)")
+            st.dataframe(df.head())
 
-            if "Data Description" in exploration_options:
-                st.subheader("Data Description (Statistical Summary)")
-                st.dataframe(df.describe())
+        if "Data Description" in exploration_options:
+            st.subheader("Data Description (Statistical Summary)")
+            st.dataframe(df.describe())
 
-            if "Data Types" in exploration_options:
-                st.subheader("Data Types")
-                st.dataframe(df.dtypes.astype(str).to_frame('Data Type'))
+        if "Data Types" in exploration_options:
+            st.subheader("Data Types")
+            st.dataframe(df.dtypes.astype(str).to_frame('Data Type'))
 
-            if "Missing Values" in exploration_options:
-                st.subheader("Missing Data Report")
-                missing_data = df.isnull().sum()
-                st.dataframe(missing_data.to_frame('Missing Values'))
+        if "Missing Values" in exploration_options:
+            st.subheader("Missing Data Report")
+            missing_data = df.isnull().sum()
+            st.dataframe(missing_data.to_frame('Missing Values'))
 
-            if "Duplicate Data" in exploration_options:
-                st.subheader("Duplicate Data Report")
-                duplicate_data = df.duplicated().sum()
-                st.write(f"Duplicate Rows: {duplicate_data}")
+        if "Duplicate Data" in exploration_options:
+            st.subheader("Duplicate Data Report")
+            duplicate_data = df.duplicated().sum()
+            st.write(f"Duplicate Rows: {duplicate_data}")
 
-            if "Unique Values" in exploration_options:
-                pd.set_option('display.max_colwidth', None)
-                unique_column = st.sidebar.selectbox("Select Column for Unique Values", df.columns)
-                st.subheader(f"Unique Values in '{unique_column}' Column")
-                unique_values_df = pd.DataFrame(df[unique_column].unique(), columns=[unique_column])
-                max_table_height = 400
-                st.dataframe(unique_values_df, width=800, height=max_table_height)
+        if "Unique Values" in exploration_options:
+            unique_column = st.sidebar.selectbox("Select Column for Unique Values", df.columns)
+            st.subheader(f"Unique Values in '{unique_column}' Column")
+            unique_values_df = pd.DataFrame(df[unique_column].unique(), columns=[unique_column])
+            max_table_height = 400
+            st.dataframe(unique_values_df, width=800, height=max_table_height)
 
-            if "Correlation Matrix" in exploration_options:
-                st.subheader("Correlation Matrix")
-                numeric_df = df.select_dtypes(include=[np.number])
-                st.write(numeric_df.corr())
+        if "Correlation Matrix" in exploration_options:
+            st.subheader("Correlation Matrix")
+            numeric_df = df.select_dtypes(include=[np.number])
+            st.write(numeric_df.corr())
 
-            if "Value Counts" in exploration_options:
-                st.subheader("Value Counts")
-                value_count_column = st.sidebar.selectbox("Select Column for Value Counts", df.columns)
-                st.write(df[value_count_column].value_counts())
+        if "Value Counts" in exploration_options:
+            value_count_column = st.sidebar.selectbox("Select Column for Value Counts", df.columns)
+            st.subheader("Value Counts")
+            st.write(df[value_count_column].value_counts())
 
-            if "Detect Outliers" in exploration_options:
-                st.subheader("Outlier Detection")
-                outlier_column = st.sidebar.selectbox("Select Column for Outlier Detection", df.select_dtypes(include=np.number).columns)
-                z_scores = np.abs(stats.zscore(df[outlier_column]))
-                threshold = 3
-                outliers = np.where(z_scores > threshold)[0]
-                if len(outliers) > 0:
-                    st.write("Outliers detected in the selected column:")
-                    st.write(df.iloc[outliers])
-                else:
-                    st.write("No outliers detected in the selected column.")
+        if "Detect Outliers" in exploration_options:
+            outlier_column = st.sidebar.selectbox("Select Column for Outlier Detection", df.select_dtypes(include=np.number).columns)
+            st.subheader("Outlier Detection")
+            z_scores = np.abs(stats.zscore(df[outlier_column]))
+            threshold = 3
+            outliers = np.where(z_scores > threshold)[0]
+            if len(outliers) > 0:
+                st.write("Outliers detected in the selected column:")
+                st.write(df.iloc[outliers])
+            else:
+                st.write("No outliers detected in the selected column.")
 
-            # Visualization
-            st.sidebar.subheader("Data Visualization Options")
-            plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 
-                          'Area Chart', 'Heatmap', 'Violin Plot', 'Boxen Plot', 'Scatter Matrix', 'Pair Density Plot']
-            plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
-            x_axis = st.sidebar.selectbox('Select X-axis', df.columns)
-            y_axis = None
-            if plot_choice not in ['Histogram', 'Pie Chart', 'Heatmap']:
-                y_axis = st.sidebar.selectbox('Select Y-axis', df.columns)
-            if st.sidebar.button('Generate Plot'):
-                st.subheader(f"{plot_choice}")
-                fig = create_plot(df, plot_choice, x_axis, y_axis)
-                if fig:
-                    st.plotly_chart(fig, use_container_width=True)
+        # Visualization
+        st.sidebar.subheader("Data Visualization Options")
+        plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 
+                      'Area Chart', 'Heatmap', 'Violin Plot', 'Boxen Plot', 'Scatter Matrix', 'Pair Density Plot']
+        plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
+        x_axis = st.sidebar.selectbox('Select X-axis', df.columns)
+        y_axis = None
+        if plot_choice not in ['Histogram', 'Pie Chart', 'Heatmap']:
+            y_axis = st.sidebar.selectbox('Select Y-axis', df.columns)
+        if st.sidebar.button('Generate Plot'):
+            st.subheader(f"{plot_choice}")
+            fig = create_plot(df, plot_choice, x_axis, y_axis)
+            if fig:
+                st.plotly_chart(fig, use_container_width=True)
 
 if __name__ == "__main__":
     main()
