@@ -2,11 +2,16 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
+
+# Configure Streamlit page
+st.set_page_config(page_title="Data Analysis Tool", page_icon=None, layout="wide", initial_sidebar_state="auto", menu_items={'Get Help': None, 'Report a bug': None, 'About': None})
+
 def preprocess_data(df):
     # Fill missing values and remove duplicates
     df.fillna(method='ffill', inplace=True)
     df.drop_duplicates(inplace=True)
     return df
+
 def create_plot(df, plot_type, x_axis, y_axis=None):
     if plot_type == 'Bar Chart':
         fig = px.bar(df, x=x_axis, y=y_axis)
@@ -26,20 +31,41 @@ def create_plot(df, plot_type, x_axis, y_axis=None):
     elif plot_type == 'Area Chart':
         fig = px.area(df, x=x_axis, y=y_axis)
     return fig
-# Streamlit app layout
-highlighted_title = "<div style='background-color: #f0f2f6; padding: 10px; border-radius: 5px; text-align: center;'>" \
+
+# Inject custom Bootstrap-like CSS
+custom_css = """
+<style>
+    /* Custom CSS for Streamlit app */
+    .reportview-container .main .block-container{
+        padding: 2rem;
+    }
+    .stButton>button {
+        border: 1px solid #4CAF50;
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 24px;
+        cursor: pointer;
+        width: 100%;
+    }
+    .stButton>button:hover {
+        background-color: #45a049;
+    }
+</style>
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
+
+highlighted_title = "<div style='background-color: #007bff; color: white; padding: 10px; border-radius: 5px; text-align: center;'>" \
                     "Comprehensive Data Analysis and Visualization Tool" \
                     "</div>"
 st.markdown(highlighted_title, unsafe_allow_html=True)
-# Adding developer credit
-st.markdown("<div style='text-align: center;'>Developed by Kumaran R</div>", unsafe_allow_html=True)
 
+st.markdown("<div style='text-align: center; margin-bottom: 20px;'>Developed by Kumaran R</div>", unsafe_allow_html=True)
 
 uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"])
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     df = preprocess_data(df)
-    # Data Exploration
+
     st.sidebar.subheader("Data Exploration")
     if st.sidebar.checkbox("View Data Head"):
         st.subheader("Data Head (First 5 Rows)")
@@ -58,22 +84,14 @@ if uploaded_file is not None:
         st.subheader("Duplicate Data Report")
         duplicate_data = df.duplicated().sum()
         st.write(f"Duplicate Rows: {duplicate_data}")
-    if st.sidebar.checkbox("View Unique Values"):
-        pd.set_option('display.max_colwidth', None)
-        unique_column = st.sidebar.selectbox("Select Column for Unique Values", df.columns)
-        st.subheader(f"Unique Values in '{unique_column}' Column")
-        unique_values_df = pd.DataFrame(df[unique_column].unique(), columns=[unique_column])
-        max_table_height = 400
-        st.dataframe(unique_values_df, width=800, height=max_table_height)
-    # Visualization
+
     st.sidebar.subheader("Data Visualization")
-    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart','Heatmap']
+    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
     plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
     x_axis = st.selectbox('Select X-axis', df.columns)
     y_axis = None
-    if plot_choice not in ['Histogram', 'Pie Chart','Heatmap']:
+    if plot_choice not in ['Histogram', 'Pie Chart', 'Heatmap']:
         y_axis = st.selectbox('Select Y-axis', df.columns)
     if st.button('Generate Plot'):
-        st.subheader(f"{plot_choice}")
         fig = create_plot(df, plot_choice, x_axis, y_axis)
         st.plotly_chart(fig, use_container_width=True)
