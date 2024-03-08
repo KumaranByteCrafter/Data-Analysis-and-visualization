@@ -83,16 +83,18 @@ if uploaded_file is not None:
         st.subheader("Duplicate Data Report")
         duplicate_data = df.duplicated().sum()
         st.write(f"Duplicate Rows: {duplicate_data}")
-    if st.sidebar.checkbox("Print Dataset Shape"):
+    if st.sidebar.checkbox("View Dataset Shape"):
         st.subheader("Dataset Shape")
         st.write(df.shape)
     if st.sidebar.checkbox("View Dataset Info"):
         st.subheader("Dataset Info")
         st.write(df.info())
-
-    if st.sidebar.checkbox("Print Dataset Columns"):
+    if st.sidebar.checkbox("View Dataset Columns"):
         st.subheader("Dataset Columns")
         st.write(df.columns.tolist())
+    if st.sidebar.checkbox("View un-unique values"):
+        st.subheader("check duplicate values")
+        st.write(df.nunique())
 
     st.sidebar.subheader("Data Visualization")
     plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
