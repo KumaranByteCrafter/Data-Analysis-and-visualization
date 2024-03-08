@@ -83,12 +83,6 @@ if uploaded_file is not None:
         st.subheader("Duplicate Data Report")
         duplicate_data = df.duplicated().sum()
         st.write(f"Duplicate Rows: {duplicate_data}")
-
-    # Additional functionality
-    st.sidebar.subheader("Data Information")
-    if st.sidebar.checkbox("Print Dataset Head"):
-        st.subheader("Dataset Head")
-        st.write(df.head())
     if st.sidebar.checkbox("Print Dataset Shape"):
         st.subheader("Dataset Shape")
         st.write(df.shape)
