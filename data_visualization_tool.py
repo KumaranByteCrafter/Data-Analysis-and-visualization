@@ -86,21 +86,13 @@ if uploaded_file is not None:
     if st.sidebar.checkbox("Print Dataset Shape"):
         st.subheader("Dataset Shape")
         st.write(df.shape)
-    if st.sidebar.checkbox("Print Dataset Info"):
+    if st.sidebar.checkbox("View Dataset Info"):
         st.subheader("Dataset Info")
         st.write(df.info())
-    if st.sidebar.checkbox("Print Dataset Description"):
-        st.subheader("Dataset Description")
-        st.write(df.describe())
+
     if st.sidebar.checkbox("Print Dataset Columns"):
         st.subheader("Dataset Columns")
         st.write(df.columns.tolist())
-    if st.sidebar.checkbox("Check for Missing Values"):
-        st.subheader("Missing Values")
-        st.write(df.isnull().sum())
-    if st.sidebar.checkbox("Check for Duplicate Values"):
-        st.subheader("Duplicate Values")
-        st.write(df.duplicated().sum())
 
     st.sidebar.subheader("Data Visualization")
     plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
