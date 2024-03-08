@@ -100,7 +100,7 @@ if uploaded_file is not None:
         st.info("This displays the list of column names in the dataset.")
         st.subheader("Dataset Columns")
         st.write(df.columns.tolist())
-    if st.sidebar.checkbox("View un-unique values"):
+    if st.sidebar.checkbox("View unique values"):
         st.info("This displays the number of unique values in each column of the dataset.")
         st.subheader("Check for Duplicate Values")
         st.write(df.nunique())
