@@ -6,12 +6,14 @@ import numpy as np
 # Configure Streamlit page
 st.set_page_config(page_title="Data Analysis Tool", page_icon=None, layout="wide", initial_sidebar_state="auto", menu_items={'Get Help': None, 'Report a bug': None, 'About': None})
 
+# Function to preprocess data
 def preprocess_data(df):
     # Fill missing values and remove duplicates
     df.fillna(method='ffill', inplace=True)
     df.drop_duplicates(inplace=True)
     return df
 
+# Function to create plots
 def create_plot(df, plot_type, x_axis, y_axis=None):
     if plot_type == 'Bar Chart':
         fig = px.bar(df, x=x_axis, y=y_axis)
@@ -31,6 +33,36 @@ def create_plot(df, plot_type, x_axis, y_axis=None):
     elif plot_type == 'Area Chart':
         fig = px.area(df, x=x_axis, y=y_axis)
     return fig
+
+# Function for EDA
+def perform_eda(df):
+    st.sidebar.subheader("Exploratory Data Analysis (EDA)")
+
+    # Load and read dataset
+    uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"])
+    if uploaded_file is not None:
+        df = pd.read_csv(uploaded_file)
+        df = preprocess_data(df)
+
+    # Data Exploration
+    st.sidebar.subheader("Data Exploration")
+
+    options = {
+        "View Data Head": df.head(),
+        "View Data Description": df.describe(),
+        "View Data Types": df.dtypes.astype(str).to_frame('Data Type'),
+        "View Missing Data": df.isnull().sum().to_frame('Missing Values'),
+        "View Duplicate Data": df.duplicated().sum(),
+        "Show Data Information": df.info(),
+        "Show Column Names": df.columns.tolist(),
+        "Check for Missing Values": df.isnull().sum(),
+        "Check for Duplicate Values": df.nunique()
+    }
+
+    for option in options:
+        if st.sidebar.checkbox(option):
+            st.subheader(option)
+            st.write(options[option])
 
 # Inject custom Bootstrap-like CSS
 custom_css = """
@@ -61,30 +93,12 @@ st.markdown(highlighted_title, unsafe_allow_html=True)
 
 st.markdown("<div style='text-align: center; margin-bottom: 20px;'>Developed by Kumaran R</div>", unsafe_allow_html=True)
 
-uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"])
-if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
-    df = preprocess_data(df)
+# Main function
+def main():
+    # Sidebar
+    perform_eda(df)
 
-    st.sidebar.subheader("Data Exploration")
-    if st.sidebar.checkbox("View Data Head"):
-        st.subheader("Data Head (First 5 Rows)")
-        st.dataframe(df.head())
-    if st.sidebar.checkbox("View Data Description"):
-        st.subheader("Data Description (Statistical Summary)")
-        st.dataframe(df.describe())
-    if st.sidebar.checkbox("View Data Types"):
-        st.subheader("Data Types")
-        st.dataframe(df.dtypes.astype(str).to_frame('Data Type'))
-    if st.sidebar.checkbox("View Missing Data"):
-        st.subheader("Missing Data Report")
-        missing_data = df.isnull().sum()
-        st.dataframe(missing_data.to_frame('Missing Values'))
-    if st.sidebar.checkbox("View Duplicate Data"):
-        st.subheader("Duplicate Data Report")
-        duplicate_data = df.duplicated().sum()
-        st.write(f"Duplicate Rows: {duplicate_data}")
-
+    # Data Visualization
     st.sidebar.subheader("Data Visualization")
     plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
     plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
@@ -95,3 +109,6 @@ if uploaded_file is not None:
     if st.button('Generate Plot'):
         fig = create_plot(df, plot_choice, x_axis, y_axis)
         st.plotly_chart(fig, use_container_width=True)
+
+if __name__ == "__main__":
+    main()
