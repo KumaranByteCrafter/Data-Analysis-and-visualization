@@ -67,43 +67,43 @@ if uploaded_file is not None:
 
     st.sidebar.subheader("Data Exploration")
     if st.sidebar.checkbox("View Data Head"):
+        st.info("This displays the first 5 rows of the dataset.")
         st.subheader("Data Head (First 5 Rows)")
         st.dataframe(df.head())
-        st.info("This displays the first 5 rows of the dataset.")
     if st.sidebar.checkbox("View Data Description"):
+        st.info("This displays the statistical summary of the dataset.")
         st.subheader("Data Description (Statistical Summary)")
         st.dataframe(df.describe())
-        st.info("This displays the statistical summary of the dataset.")
     if st.sidebar.checkbox("View Data Types"):
+        st.info("This displays the data types of each column in the dataset.")
         st.subheader("Data Types")
         st.dataframe(df.dtypes.astype(str).to_frame('Data Type'))
-        st.info("This displays the data types of each column in the dataset.")
     if st.sidebar.checkbox("View Missing Data"):
+        st.info("This displays the missing values in the dataset.")
         st.subheader("Missing Data Report")
         missing_data = df.isnull().sum()
         st.dataframe(missing_data.to_frame('Missing Values'))
-        st.info("This displays the missing values in the dataset.")
     if st.sidebar.checkbox("View Duplicate Data"):
+        st.info("This displays the number of duplicate rows in the dataset.")
         st.subheader("Duplicate Data Report")
         duplicate_data = df.duplicated().sum()
         st.write(f"Duplicate Rows: {duplicate_data}")
-        st.info("This displays the number of duplicate rows in the dataset.")
     if st.sidebar.checkbox("View Dataset Shape"):
+        st.info("This displays the shape (number of rows and columns) of the dataset.")
         st.subheader("Dataset Shape")
         st.write(df.shape)
-        st.info("This displays the shape (number of rows and columns) of the dataset.")
     if st.sidebar.checkbox("View Dataset Info"):
+        st.info("This displays information about the dataset, including data types and memory usage.")
         st.subheader("Dataset Info")
         st.write(df.info())
-        st.info("This displays information about the dataset, including data types and memory usage.")
     if st.sidebar.checkbox("View Dataset Columns"):
+        st.info("This displays the list of column names in the dataset.")
         st.subheader("Dataset Columns")
         st.write(df.columns.tolist())
-        st.info("This displays the list of column names in the dataset.")
     if st.sidebar.checkbox("View un-unique values"):
+        st.info("This displays the number of unique values in each column of the dataset.")
         st.subheader("Check for Duplicate Values")
         st.write(df.nunique())
-        st.info("This displays the number of unique values in each column of the dataset.")
 
     st.sidebar.subheader("Data Visualization")
     plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
