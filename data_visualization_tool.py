@@ -3,15 +3,14 @@ import pandas as pd
 import plotly.express as px
 import numpy as np
 
-# Configure Streamlit page
-st.set_page_config(page_title="Data Analysis Tool", page_icon=None, layout="wide", initial_sidebar_state="auto", menu_items={'Get Help': None, 'Report a bug': None, 'About': None})
-
+# Function to preprocess data
 def preprocess_data(df):
     # Fill missing values and remove duplicates
     df.fillna(method='ffill', inplace=True)
     df.drop_duplicates(inplace=True)
     return df
 
+# Function to create plots
 def create_plot(df, plot_type, x_axis, y_axis=None):
     if plot_type == 'Bar Chart':
         fig = px.bar(df, x=x_axis, y=y_axis)
@@ -84,6 +83,30 @@ if uploaded_file is not None:
         st.subheader("Duplicate Data Report")
         duplicate_data = df.duplicated().sum()
         st.write(f"Duplicate Rows: {duplicate_data}")
+
+    # Additional functionality
+    st.sidebar.subheader("Data Information")
+    if st.sidebar.checkbox("Print Dataset Head"):
+        st.subheader("Dataset Head")
+        st.write(df.head())
+    if st.sidebar.checkbox("Print Dataset Shape"):
+        st.subheader("Dataset Shape")
+        st.write(df.shape)
+    if st.sidebar.checkbox("Print Dataset Info"):
+        st.subheader("Dataset Info")
+        st.write(df.info())
+    if st.sidebar.checkbox("Print Dataset Description"):
+        st.subheader("Dataset Description")
+        st.write(df.describe())
+    if st.sidebar.checkbox("Print Dataset Columns"):
+        st.subheader("Dataset Columns")
+        st.write(df.columns.tolist())
+    if st.sidebar.checkbox("Check for Missing Values"):
+        st.subheader("Missing Values")
+        st.write(df.isnull().sum())
+    if st.sidebar.checkbox("Check for Duplicate Values"):
+        st.subheader("Duplicate Values")
+        st.write(df.duplicated().sum())
 
     st.sidebar.subheader("Data Visualization")
     plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
