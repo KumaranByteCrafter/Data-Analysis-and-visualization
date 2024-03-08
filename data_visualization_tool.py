@@ -79,9 +79,6 @@ if uploaded_file is not None:
         st.subheader("Missing Data Report")
         missing_data = df.isnull().sum()
         st.dataframe(missing_data.to_frame('Missing Values'))
-    if st.sidebar.checkbox("View Duplicate Data"):
-        st.subheader("Duplicate Data Report")
-        duplicate_data = df.duplicated().sum()
         st.write(f"Duplicate Rows: {duplicate_data}")
     if st.sidebar.checkbox("View Dataset Shape"):
         st.subheader("Dataset Shape")
