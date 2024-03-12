@@ -120,15 +120,22 @@ if uploaded_file is not None:
             fig = create_plot(df, plot_choice, x_axis, y_axis)
             st.plotly_chart(fig, use_container_width=True)
     elif visualization_choice == "Visualization 2":
-        # Form
-        with st.form("upload_form"):
-            data_file = st.file_uploader("Upload a CSV File", type=["csv", "txt"])
-            submitted = st.form_submit_button("Submit")
+    # Form
+    with st.form("upload_form"):
+        data_file = st.file_uploader("Upload a CSV File", type=["csv", "txt"])
+        submitted = st.form_submit_button("Submit")
 
-        if submitted:
-            df = load_data(data_file)
-            st.dataframe(df)
-            # Visualize
-            pyg_html = pyg.walk(df,return_html=True)
-            # Render with components
-            stc.html(pyg_html,scrolling=True,height=1000)
+    if submitted:
+        df = load_data(data_file)
+        st.dataframe(df)
+        # Visualize
+        pyg_html = pyg.walk(df, return_html=True)
+        # Render with components
+        stc.html(pyg_html, scrolling=True, height=1000)
+
+        # Generate a visualization automatically
+        plot_choice = 'Bar Chart'  # Choose a default plot type or customize this
+        x_axis = df.columns[0]  # Choose a default x-axis or customize this
+        y_axis = df.columns[1] if len(df.columns) > 1 else None  # Choose a default y-axis or customize this
+        fig = create_plot(df, plot_choice, x_axis, y_axis)
+        st.plotly_chart(fig, use_container_width=True)
