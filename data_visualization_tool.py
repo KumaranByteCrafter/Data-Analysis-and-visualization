@@ -62,71 +62,73 @@ st.markdown(highlighted_title, unsafe_allow_html=True)
 
 st.markdown("<div style='text-align: center; margin-bottom: 20px;'>Developed by Kumaran R</div>", unsafe_allow_html=True)
 
-def main():
-    st.title("Streamlit PyGWalker App")
+uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"])
+if uploaded_file is not None:
+    df = pd.read_csv(uploaded_file)
+    df = preprocess_data(df)
 
-    menu = ["Home", "Visualization", "About"]
-    choice = st.sidebar.selectbox("Menu", menu)
+    st.sidebar.subheader("Data Exploration")
+    if st.sidebar.checkbox("View Data Head"):
+        st.info("This displays the first 5 rows of the dataset.")
+        st.subheader("Data Head (First 5 Rows)")
+        st.dataframe(df.head())
+    if st.sidebar.checkbox("View Data Description"):
+        st.info("This displays the statistical summary of the dataset.")
+        st.subheader("Data Description (Statistical Summary)")
+        st.dataframe(df.describe())
+    if st.sidebar.checkbox("View Data Types"):
+        st.info("This displays the data types of each column in the dataset.")
+        st.subheader("Data Types")
+        st.dataframe(df.dtypes.astype(str).to_frame('Data Type'))
+    if st.sidebar.checkbox("View Missing Data"):
+        st.info("This displays the missing values in the dataset.")
+        st.subheader("Missing Data Report")
+        missing_data = df.isnull().sum()
+        st.dataframe(missing_data.to_frame('Missing Values'))
+    if st.sidebar.checkbox("View Duplicate Data"):
+        st.info("This displays the number of duplicate rows in the dataset.")
+        st.subheader("Duplicate Data Report")
+        duplicate_data = df.duplicated().sum()
+        st.write(f"Duplicate Rows: {duplicate_data}")
+    if st.sidebar.checkbox("View Dataset Shape"):
+        st.info("This displays the shape (number of rows and columns) of the dataset.")
+        st.subheader("Dataset Shape")
+        st.write(df.shape)
+    if st.sidebar.checkbox("View Dataset Info"):
+        st.info("This displays information about the dataset, including data types and memory usage.")
+        st.subheader("Dataset Info")
+        st.write(df.info())
+    if st.sidebar.checkbox("View Dataset Columns"):
+        st.info("This displays the list of column names in the dataset.")
+        st.subheader("Dataset Columns")
+        st.write(df.columns.tolist())
+    if st.sidebar.checkbox("View unique values"):
+        st.info("This displays the number of unique values in each column of the dataset.")
+        st.subheader("Check for Duplicate Values")
+        st.write(df.nunique())
 
-    if choice == "Home":
-        st.subheader("Home")
+    st.sidebar.subheader("Data Visualization")
+    visualization_choice = st.sidebar.radio("Select Visualization", ("Visualization 1", "Visualization 2"))
+    if visualization_choice == "Visualization 1":
+        plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
+        plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
+        x_axis = st.selectbox('Select X-axis', df.columns)
+        y_axis = None
+        if plot_choice not in ['Histogram', 'Pie Chart', 'Heatmap']:
+            y_axis = st.selectbox('Select Y-axis', df.columns)
+        if st.button('Generate Plot'):
+            fig = create_plot(df, plot_choice, x_axis, y_axis)
+            st.plotly_chart(fig, use_container_width=True)
+    elif visualization_choice == "Visualization 2":
         # Form
         with st.form("upload_form"):
-            data_file = st.file_uploader("Upload your CSV file", type=["csv"])
+            data_file = st.file_uploader("Upload a CSV File", type=["csv", "txt"])
             submitted = st.form_submit_button("Submit")
 
         if submitted:
             df = pd.read_csv(data_file)
-            df = preprocess_data(df)
-
-            st.sidebar.subheader("Data Exploration")
-            if st.sidebar.checkbox("View Data Head"):
-                st.info("This displays the first 5 rows of the dataset.")
-                st.subheader("Data Head (First 5 Rows)")
-                st.dataframe(df.head())
-            if st.sidebar.checkbox("View Data Description"):
-                st.info("This displays the statistical summary of the dataset.")
-                st.subheader("Data Description (Statistical Summary)")
-                st.dataframe(df.describe())
-            if st.sidebar.checkbox("View Data Types"):
-                st.info("This displays the data types of each column in the dataset.")
-                st.subheader("Data Types")
-                st.dataframe(df.dtypes.astype(str).to_frame('Data Type'))
-            if st.sidebar.checkbox("View Missing Data"):
-                st.info("This displays the missing values in the dataset.")
-                st.subheader("Missing Data Report")
-                missing_data = df.isnull().sum()
-                st.dataframe(missing_data.to_frame('Missing Values'))
-            if st.sidebar.checkbox("View Duplicate Data"):
-                st.info("This displays the number of duplicate rows in the dataset.")
-                st.subheader("Duplicate Data Report")
-                duplicate_data = df.duplicated().sum()
-                st.write(f"Duplicate Rows: {duplicate_data}")
-            if st.sidebar.checkbox("View Dataset Shape"):
-                st.info("This displays the shape (number of rows and columns) of the dataset.")
-                st.subheader("Dataset Shape")
-                st.write(df.shape)
-            if st.sidebar.checkbox("View Dataset Info"):
-                st.info("This displays information about the dataset, including data types and memory usage.")
-                st.subheader("Dataset Info")
-                st.write(df.info())
-            if st.sidebar.checkbox("View Dataset Columns"):
-                st.info("This displays the list of column names in the dataset.")
-                st.subheader("Dataset Columns")
-                st.write(df.columns.tolist())
-            if st.sidebar.checkbox("View unique values"):
-                st.info("This displays the number of unique values in each column of the dataset.")
-                st.subheader("Check for Duplicate Values")
-                st.write(df.nunique())
-
-    elif choice == "Visualization":
-        st.subheader("Visualization")
-        with st.spinner('Generating visualization...'):
+            st.dataframe(df)
+            # Visualize
             pyg_html = pyg.walk(df, return_html=True)
+            # Render with components
             stc.html(pyg_html, scrolling=True, height=1000)
-
-    else:
-        st.subheader("About")
-
-if __name__ == '__main__':
-    main()
