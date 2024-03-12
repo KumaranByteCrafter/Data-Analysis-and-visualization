@@ -134,21 +134,3 @@ if uploaded_file is not None:
         if st.button('Generate Plot'):
             fig = create_plot(df, plot_choice, x_axis, y_axis)
             st.plotly_chart(fig, use_container_width=True)
-    elif visualization_choice == "Visualization 2":
-        # Form
-        with st.form("upload_form"):
-            submitted = st.form_submit_button("Submit")
-
-        if submitted:
-            st.dataframe(df)
-            # Visualize
-            pyg_html = pyg.walk(df, return_html=True)
-            # Render with components
-            stc.html(pyg_html, scrolling=True, height=1000)
-
-            # Generate a visualization automatically
-           
-            x_axis = df.columns[0]  # Choose a default x-axis or customize this
-            y_axis = df.columns[1] if len(df.columns) > 1 else None  # Choose a default y-axis or customize this
-            fig = create_plot(df, plot_choice, x_axis, y_axis)
-            st.plotly_chart(fig, use_container_width=True)
