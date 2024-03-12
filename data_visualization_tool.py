@@ -123,7 +123,6 @@ if uploaded_file is not None:
         st.write(df.nunique())
 
     st.sidebar.subheader("Data Visualization")
-    visualization_choice = st.sidebar.radio("Select Visualization", ("Visualization 1", "Visualization 2"))
     if visualization_choice == "Visualization 1":
         plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
         plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
