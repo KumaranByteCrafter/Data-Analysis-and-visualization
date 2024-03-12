@@ -123,13 +123,12 @@ if uploaded_file is not None:
         st.write(df.nunique())
 
     st.sidebar.subheader("Data Visualization")
-    if visualization_choice == "Visualization 1":
-        plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
-        plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
-        x_axis = st.selectbox('Select X-axis', df.columns)
-        y_axis = None
-        if plot_choice not in ['Histogram', 'Pie Chart', 'Heatmap']:
-            y_axis = st.selectbox('Select Y-axis', df.columns)
-        if st.button('Generate Plot'):
-            fig = create_plot(df, plot_choice, x_axis, y_axis)
-            st.plotly_chart(fig, use_container_width=True)
+    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
+    plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
+    x_axis = st.selectbox('Select X-axis', df.columns)
+    y_axis = None
+    if plot_choice not in ['Histogram', 'Pie Chart', 'Heatmap']:
+        y_axis = st.selectbox('Select Y-axis', df.columns)
+    if st.button('Generate Plot'):
+        fig = create_plot(df, plot_choice, x_axis, y_axis)
+        st.plotly_chart(fig, use_container_width=True)
