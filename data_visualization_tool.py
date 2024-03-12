@@ -126,4 +126,6 @@ if uploaded_file is not None:
 
     st.sidebar.subheader("Data Visualization with PyGWalker")
     if st.sidebar.button("Visualize with PyGWalker"):
-        pyg.walk(df)
+        ppyg_html = pyg.to_html(df)
+        # Embed the HTML into the Streamlit app
+        components.html(pyg_html, height=1000, scrolling=True)
