@@ -126,5 +126,5 @@ if uploaded_file is not None:
 
     st.sidebar.subheader("Data Visualization with PyGWalker")
     if st.sidebar.button("Visualize with PyGWalker"):
-        pyg_html = pyg.walk(df,return_html=True)
-        components.html(pyg_html,height=1000,scrolling=True)
+        pyg_html = pyg.walk(df, return_html=True)
+        stc.html(pyg_html, height=1000, scrolling=True)
