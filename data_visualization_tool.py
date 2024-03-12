@@ -11,6 +11,10 @@ def preprocess_data(df):
     df.fillna(method='ffill', inplace=True)
     df.drop_duplicates(inplace=True)
     return df
+def load_data(data_file):
+    if data_file is not None:
+        return pd.read_csv(data_file)
+    return None
 
 # Function to create plots
 def create_plot(df, plot_type, x_axis, y_axis=None):
