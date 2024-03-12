@@ -73,15 +73,6 @@ if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     df = preprocess_data(df)
 
-    # Generate config.json based on dataset
-    config_data = {}
-    for col in df.columns:
-        config_data[col] = {
-            "type": "number" if df[col].dtype == "float64" or df[col].dtype == "int64" else "category"
-        }
-    with open("config.json", "w") as config_file:
-        json.dump(config_data, config_file)
-
     st.sidebar.subheader("Data Exploration")
     if st.sidebar.checkbox("View Data Head"):
         st.info("This displays the first 5 rows of the dataset.")
@@ -132,3 +123,8 @@ if uploaded_file is not None:
     if st.button('Generate Plot'):
         fig = create_plot(df, plot_choice, x_axis, y_axis)
         st.plotly_chart(fig, use_container_width=True)
+
+    st.sidebar.subheader("Data Visualization with PyGWalker")
+    if st.sidebar.button("Visualize with PyGWalker"):
+        vis_spec = """[{"visId":"gw_166k","name":"Chart 1","encodings":{"dimensions":[{"dragId":"gw_XjJG","fid":"c2V4XzM=","name":"sex","semanticType":"nominal","analyticType":"dimension"},{"dragId":"gw_MI9H","fid":"c21va2VyXzQ=","name":"smoker","semanticType":"nominal","analyticType":"dimension"},{"dragId":"gw_9BgZ","fid":"ZGF5XzU=","name":"day","semanticType":"nominal","analyticType":"dimension"},{"dragId":"gw_EGms","fid":"dGltZV82","name":"time","semanticType":"nominal","analyticType":"dimension"},{"dragId":"gw_9bbp","fid":"c2l6ZV83","name":"size","semanticType":"ordinal","analyticType":"dimension"}],"measures":[{"dragId":"gw_X7ie","fid":"aW5kZXhfMA==","name":"index","analyticType":"measure","semanticType":"quantitative","aggName":"sum"},{"dragId":"gw_L-AM","fid":"dG90YWxfYmlsbF8x","name":"total_bill","analyticType":"measure","semanticType":"quantitative","aggName":"sum"},{"dragId":"gw_xZsJ","fid":"dGlwXzI=","name":"tip","analyticType":"measure","semanticType":"quantitative","aggName":"sum"},{"dragId":"gw_count_fid","fid":"gw_count_fid","name":"Row count","analyticType":"measure","semanticType":"quantitative","aggName":"sum","computed":true,"expression":{"op":"one","params":[],"as":"gw_count_fid"}}],"rows":[{"dragId":"gw_ABZ4","fid":"dG90YWxfYmlsbF8x","name":"total_bill","analyticType":"measure","semanticType":"quantitative","aggName":"sum"}],"columns":[{"dragId":"gw_DBTk","fid":"ZGF5XzU=","name":"day","semanticType":"nominal","analyticType":"dimension"}],"color":[{"dragId":"gw_zSLf","fid":"c21va2VyXzQ=","name":"smoker","semanticType":"nominal","analyticType":"dimension"}],"opacity":[],"size":[],"shape":[],"radius":[],"theta":[],"details":[],"filters":[],"text":[]},"config":{"defaultAggregated":true,"geoms":["auto"],"stack":"stack","showActions":false,"interactiveScale":false,"sorted":"none","size":{"mode":"auto","width":320,"height":200},"format":{}}}]"""
+        pyg.walk(df, spec=vis_spec, dark='light')
