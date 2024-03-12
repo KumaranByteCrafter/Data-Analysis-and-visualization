@@ -126,9 +126,9 @@ if uploaded_file is not None:
             submitted = st.form_submit_button("Submit")
 
         if submitted:
-            df = pd.read_csv(data_file)
+            df = load_data(data_file)
             st.dataframe(df)
             # Visualize
-            pyg_html = pyg.walk(df, return_html=True)
+            pyg_html = pyg.walk(df,return_html=True)
             # Render with components
-            stc.html(pyg_html, scrolling=True, height=1000)
+            stc.html(pyg_html,scrolling=True,height=1000)
