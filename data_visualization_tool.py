@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
-import pygwalker
 
 # Function to preprocess data
 def preprocess_data(df):
@@ -11,25 +10,25 @@ def preprocess_data(df):
     df.drop_duplicates(inplace=True)
     return df
 
-# Function to create plots using pygwalker
-def create_plot_pygwalker(df, plot_type, x_axis, y_axis=None):
-    fig = pygwalker.create_figure()
+# Function to create plots
+def create_plot(df, plot_type, x_axis, y_axis=None):
     if plot_type == 'Bar Chart':
-        fig.bar(df, x_axis, y_axis)
+        fig = px.bar(df, x=x_axis, y=y_axis)
     elif plot_type == 'Line Chart':
-        fig.line(df, x_axis, y_axis)
+        fig = px.line(df, x=x_axis, y=y_axis)
     elif plot_type == 'Scatter Plot':
-        fig.scatter(df, x_axis, y_axis)
+        fig = px.scatter(df, x=x_axis, y=y_axis)
     elif plot_type == 'Histogram':
-        fig.hist(df, x_axis)
+        fig = px.histogram(df, x=x_axis)
     elif plot_type == 'Box Plot':
-        fig.box(df, x_axis, y_axis)
+        fig = px.box(df, x=x_axis, y=y_axis)
     elif plot_type == 'Pie Chart':
-        fig.pie(df, x_axis, y_axis)
+        fig = px.pie(df, names=x_axis, values=y_axis)
     elif plot_type == 'Heatmap':
-        fig.heatmap(df.corr())
+        numeric_df = df.select_dtypes(include=[np.number])
+        fig = px.imshow(numeric_df.corr(), text_auto=True)
     elif plot_type == 'Area Chart':
-        fig.area(df, x_axis, y_axis)
+        fig = px.area(df, x=x_axis, y=y_axis)
     return fig
 
 # Inject custom Bootstrap-like CSS
@@ -114,13 +113,5 @@ if uploaded_file is not None:
     if plot_choice not in ['Histogram', 'Pie Chart', 'Heatmap']:
         y_axis = st.selectbox('Select Y-axis', df.columns)
     if st.button('Generate Plot'):
-        if plot_choice in ['Histogram']:
-            fig = px.histogram(df, x=x_axis)
-        elif plot_choice in ['Pie Chart']:
-            fig = px.pie(df, names=x_axis, values=y_axis)
-        elif plot_choice in ['Heatmap']:
-            numeric_df = df.select_dtypes(include=[np.number])
-            fig = px.imshow(numeric_df.corr(), text_auto=True)
-        else:
-            fig = create_plot_pygwalker(df, plot_choice, x_axis, y_axis)
+        fig = create_plot(df, plot_choice, x_axis, y_axis)
         st.plotly_chart(fig, use_container_width=True)
