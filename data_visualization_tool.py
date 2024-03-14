@@ -5,7 +5,7 @@ import numpy as np
 import streamlit.components.v1 as components
 import json
 from ydata_profiling import ProfileReport
-from streamlit_pandas_profiling import st_profile_report
+
 # Function to preprocess data
 def preprocess_data(df):
     # Fill missing values and remove duplicates
