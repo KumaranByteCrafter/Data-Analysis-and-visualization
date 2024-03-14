@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
-import pygwalker as pyg
 import streamlit.components.v1 as components
 import json
 
