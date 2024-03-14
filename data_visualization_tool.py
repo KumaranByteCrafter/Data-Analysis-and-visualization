@@ -151,7 +151,7 @@ if uploaded_file is not None:
     if st.sidebar.button("Visualize with interactive"):
         # Embed  html into the Streamlit
         pyg_html = pyg.to_html(df)  # Assuming this generates the PyGWalker visualization
-            if pyg_html is not None:
-                components.iframe("data:text/html;base64," + base64.b64encode(pyg_html.encode()).decode(), height=1000, scrolling=True)
-            else:
-                st.write("Error generating PyGWalker visualization")
+        if pyg_html is not None:
+            components.iframe("data:text/html;base64," + base64.b64encode(pyg_html.encode()).decode(), height=1000, scrolling=True)
+        else:
+            st.write("Error generating PyGWalker visualization")
