@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
-import pygwalker as pyg
 import streamlit.components.v1 as components
 import json
 
@@ -124,12 +123,5 @@ if uploaded_file is not None:
     if st.button('Generate Plot'):
         fig = create_plot(df, plot_choice, x_axis, y_axis)
         st.plotly_chart(fig, use_container_width=True)
-
-    st.sidebar.subheader("Data Visualization")
-    if st.sidebar.button("Visualize with interactive"):
-        pyg_html = pyg.walk(df)
-        print(pyg_html)
-        # Embed  html into the Streamlit
-        components.html(pyg_html, height=1000, scrolling=True)
 
 
