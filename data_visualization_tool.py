@@ -4,7 +4,8 @@ import plotly.express as px
 import numpy as np
 import streamlit.components.v1 as components
 import json
-
+from ydata_profiling import ProfileReport
+from nbformat import write
 
 # Function to preprocess data
 def preprocess_data(df):
@@ -124,3 +125,25 @@ if uploaded_file is not None:
         fig = create_plot(df, plot_choice, x_axis, y_axis)
         st.plotly_chart(fig, use_container_width=True)
 
+st.title("Data Profiling App")
+st.subheader("This app will help you to do Data Exploration")
+
+st.sidebar.header('User Input Features')
+
+
+# Collects user input features into dataframe
+uploaded_file = st.sidebar.file_uploader("Upload your input Excel file", type="xlsx")
+if uploaded_file is not None:
+    st.markdown('---')
+    input_df = pd.read_excel(uploaded_file, engine="openpyxl")
+    
+    profile = ProfileReport(input_df, title="New Data for profiling")
+
+    st.subheader("Detailed Report of the Data Used")
+
+    st.write(input_df)
+
+    st_profile_report(profile)    
+    
+else:
+    st.write("You did not upload the new file")
