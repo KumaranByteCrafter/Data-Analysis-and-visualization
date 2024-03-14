@@ -2,9 +2,11 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
-import pygwalker as pyg
-import streamlit.components.v1 as components
 import json
+import ydata_profiling
+from streamlit_pandas_profiling import st_profile_report
+from ydata_profiling import ProfileReport
+from nbformat import write
 
 # Function to preprocess data
 def preprocess_data(df):
