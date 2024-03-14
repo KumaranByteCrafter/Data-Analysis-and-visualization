@@ -124,7 +124,7 @@ if uploaded_file is not None:
         fig = create_plot(df, plot_choice, x_axis, y_axis)
         st.plotly_chart(fig, use_container_width=True)
 
-    st.sidebar.subheader("Data Visualization with PyGWalker")
-    if st.sidebar.button("Visualize with PyGWalker"):
-        pyg_html = pyg.to_html(df)
-        components.html(pyg_html, height=1000, scrolling=True)
+    #st.sidebar.subheader("Data Visualization with PyGWalker")
+    #if st.sidebar.button("Visualize with PyGWalker"):
+        #pyg_html = pyg.to_html(df)
+        #components.html(pyg_html, height=1000, scrolling=True)
