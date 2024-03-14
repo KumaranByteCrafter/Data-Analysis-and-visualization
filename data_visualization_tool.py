@@ -5,8 +5,7 @@ import numpy as np
 import pygwalker as pyg
 import streamlit.components.v1 as components
 import json
-from pygwalker.api.streamlit import StreamlitRenderer, init_streamlit_comm
-init_streamlit_comm()
+
 
 # Function to preprocess data
 def preprocess_data(df):
