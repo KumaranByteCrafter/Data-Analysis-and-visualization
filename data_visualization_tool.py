@@ -4,7 +4,7 @@ import plotly.express as px
 import numpy as np
 import streamlit.components.v1 as components
 import json
-from ydata_profiling import ProfileReport
+
 
 # Function to preprocess data
 def preprocess_data(df):
@@ -123,7 +123,4 @@ if uploaded_file is not None:
     if st.button('Generate Plot'):
         fig = create_plot(df, plot_choice, x_axis, y_axis)
         st.plotly_chart(fig, use_container_width=True)
-    if st.sidebar.button("Explore Data"):
-        profile = ProfileReport(df, title="Data Profiling Report")
-        st_profile_report(profile)
 
