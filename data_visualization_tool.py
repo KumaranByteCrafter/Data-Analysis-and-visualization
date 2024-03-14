@@ -5,30 +5,7 @@ import numpy as np
 import pygwalker as pyg
 import streamlit.components.v1 as components
 import json
-pyg_html = """
-<html>
-<head>
-    <!-- Any necessary CSS or scripts for the PyGWalker visualization -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            color: #007bff;
-        }
-        /* Add any other styles you need */
-    </style>
-</head>
-<body>
-    <h1>PyGWalker Visualization</h1>
-    <!-- Your PyGWalker visualization content here -->
-    <div id="pygwalker-viz">
-        <!-- Add your PyGWalker visualization content here -->
-    </div>
-</body>
-</html>
-"""
+
 # Function to preprocess data
 def preprocess_data(df):
     # Fill missing values and remove duplicates
@@ -147,11 +124,7 @@ if uploaded_file is not None:
         fig = create_plot(df, plot_choice, x_axis, y_axis)
         st.plotly_chart(fig, use_container_width=True)
 
-    st.sidebar.subheader("Data Visualization")
-    if st.sidebar.button("Visualize with interactive"):
-        # Embed  html into the Streamlit
-        pyg_html = pyg.to_html(df)  # Assuming this generates the PyGWalker visualization
-        if pyg_html is not None:
-            components.iframe("data:text/html;base64," + base64.b64encode(pyg_html.encode()).decode(), height=1000, scrolling=True)
-        else:
-            st.write("Error generating PyGWalker visualization")
+    st.sidebar.subheader("Data Visualization with PyGWalker")
+    if st.sidebar.button("Visualize with PyGWalker"):
+        pyg_html = pyg.to_html(df)
+        components.html(pyg_html, height=1000, scrolling=True)
