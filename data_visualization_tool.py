@@ -109,8 +109,7 @@ if uploaded_file is not None:
         st.write(df.nunique())
 
     st.sidebar.subheader("Data Visualization")
-    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Heatmap', 'Area Chart',
-                  'Map']
+    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Heatmap', 'Area Chart']
     plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
     x_axis = st.selectbox('Select X-axis', df.columns)
     y_axis = None
