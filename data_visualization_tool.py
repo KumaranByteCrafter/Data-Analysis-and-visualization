@@ -1,8 +1,10 @@
-import streamlit as st
+mport streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
-
+import pygwalker as pyg
+import streamlit.components.v1 as components
+import json
 
 # Function to preprocess data
 def preprocess_data(df):
@@ -122,4 +124,8 @@ if uploaded_file is not None:
         fig = create_plot(df, plot_choice, x_axis, y_axis)
         st.plotly_chart(fig, use_container_width=True)
 
-
+    st.sidebar.subheader("Data Visualization")
+    if st.sidebar.button("Visualize with interactive"):
+        pyg_html = pyg.to_html(df)
+        # Embed  html into the Streamlit
+        components.html(pyg_html, height=1000,width=1000,scrolling=True)
