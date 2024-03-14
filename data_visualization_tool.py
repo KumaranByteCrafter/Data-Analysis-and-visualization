@@ -32,9 +32,6 @@ def create_plot(df, plot_type, x_axis, y_axis=None):
         fig = px.box(df, x=x_axis, y=y_axis)
     elif plot_type == 'Pie Chart':
         fig = px.pie(df, names=x_axis, values=y_axis)
-    elif plot_type == 'Heatmap':
-        numeric_df = df.select_dtypes(include=[np.number])
-        fig = px.imshow(numeric_df.corr(), text_auto=True)
     elif plot_type == 'Area Chart':
         fig = px.area(df, x=x_axis, y=y_axis)
     return fig
@@ -114,7 +111,7 @@ if uploaded_file is not None:
         st.write(df.nunique())
 
     st.sidebar.subheader("Data Visualization")
-    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
+    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart']
     plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
     x_axis = st.selectbox('Select X-axis', df.columns)
     y_axis = None
