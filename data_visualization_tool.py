@@ -2,8 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
-from ydata_profiling import ProfileReport
-from streamlit_pandas_profiling import st_profile_report
+
 
 # Function to preprocess data
 def preprocess_data(df):
@@ -123,25 +122,4 @@ if uploaded_file is not None:
         fig = create_plot(df, plot_choice, x_axis, y_axis)
         st.plotly_chart(fig, use_container_width=True)
 
-    # Pandas Profiling Report
-    pr = ProfileReport(df, explorative=True)
-    st.header('**Pandas Profiling Report**')
-    st_profile_report(pr)
-else:
-    st.info('Awaiting for CSV file to be uploaded.')
-    if st.button('Press to use Example Dataset'):
-        # Example data
-        @st.cache
-        def load_data():
-            a = pd.DataFrame(
-                np.random.rand(100, 5),
-                columns=['a', 'b', 'c', 'd', 'e']
-            )
-            return a
-        df = load_data()
-        pr = ProfileReport(df, explorative=True)
-        st.header('**Input DataFrame**')
-        st.write(df)
-        st.write('---')
-        st.header('**Pandas Profiling Report**')
-        st_profile_report(pr)
+
