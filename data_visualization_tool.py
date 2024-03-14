@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
+from ydata_profiling import ProfileReport
+from streamlit_pandas_profiling import st_profile_report
 
 # Function to preprocess data
 def preprocess_data(df):
@@ -18,21 +20,23 @@ def load_data(data_file):
 # Function to create plots
 def create_plot(df, plot_type, x_axis, y_axis=None):
     if plot_type == 'Bar Chart':
-        st.bar_chart(df)
+        fig = px.bar(df, x=x_axis, y=y_axis)
     elif plot_type == 'Line Chart':
-        st.line_chart(df)
+        fig = px.line(df, x=x_axis, y=y_axis)
     elif plot_type == 'Scatter Plot':
-        st.scatter_chart(df)
+        fig = px.scatter(df, x=x_axis, y=y_axis)
     elif plot_type == 'Histogram':
-        st.bar_chart(df)
+        fig = px.histogram(df, x=x_axis)
     elif plot_type == 'Box Plot':
-        st.line_chart(df)
+        fig = px.box(df, x=x_axis, y=y_axis)
     elif plot_type == 'Pie Chart':
-        st.bar_chart(df)
+        fig = px.pie(df, names=x_axis, values=y_axis)
     elif plot_type == 'Heatmap':
-        st.bar_chart(df)
+        numeric_df = df.select_dtypes(include=[np.number])
+        fig = px.imshow(numeric_df.corr(), text_auto=True)
     elif plot_type == 'Area Chart':
-        st.area_chart(df)
+        fig = px.area(df, x=x_axis, y=y_axis)
+    return fig
 
 # Inject custom Bootstrap-like CSS
 custom_css = """
@@ -109,7 +113,7 @@ if uploaded_file is not None:
         st.write(df.nunique())
 
     st.sidebar.subheader("Data Visualization")
-    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Heatmap', 'Area Chart']
+    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
     plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
     x_axis = st.selectbox('Select X-axis', df.columns)
     y_axis = None
@@ -118,3 +122,26 @@ if uploaded_file is not None:
     if st.button('Generate Plot'):
         fig = create_plot(df, plot_choice, x_axis, y_axis)
         st.plotly_chart(fig, use_container_width=True)
+
+    # Pandas Profiling Report
+    pr = ProfileReport(df, explorative=True)
+    st.header('**Pandas Profiling Report**')
+    st_profile_report(pr)
+else:
+    st.info('Awaiting for CSV file to be uploaded.')
+    if st.button('Press to use Example Dataset'):
+        # Example data
+        @st.cache
+        def load_data():
+            a = pd.DataFrame(
+                np.random.rand(100, 5),
+                columns=['a', 'b', 'c', 'd', 'e']
+            )
+            return a
+        df = load_data()
+        pr = ProfileReport(df, explorative=True)
+        st.header('**Input DataFrame**')
+        st.write(df)
+        st.write('---')
+        st.header('**Pandas Profiling Report**')
+        st_profile_report(pr)
