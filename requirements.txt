@@ -2,7 +2,4 @@ streamlit
 pandas
 plotly
 numpy
-ydata-profiling
-nbformat
-openpyxl
-streamlit_pandas_profiling
+
