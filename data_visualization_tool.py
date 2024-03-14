@@ -18,23 +18,37 @@ def load_data(data_file):
 # Function to create plots
 def create_plot(df, plot_type, x_axis, y_axis=None):
     if plot_type == 'Bar Chart':
-        fig = px.bar(df, x=x_axis, y=y_axis)
+        st.bar_chart(df)
     elif plot_type == 'Line Chart':
-        fig = px.line(df, x=x_axis, y=y_axis)
+        st.line_chart(df)
     elif plot_type == 'Scatter Plot':
-        fig = px.scatter(df, x=x_axis, y=y_axis)
+        st.scatter_chart(df)
     elif plot_type == 'Histogram':
-        fig = px.histogram(df, x=x_axis)
+        st.bar_chart(df)
     elif plot_type == 'Box Plot':
-        fig = px.box(df, x=x_axis, y=y_axis)
+        st.line_chart(df)
     elif plot_type == 'Pie Chart':
-        fig = px.pie(df, names=x_axis, values=y_axis)
+        st.bar_chart(df)
     elif plot_type == 'Heatmap':
-        numeric_df = df.select_dtypes(include=[np.number])
-        fig = px.imshow(numeric_df.corr(), text_auto=True)
+        st.bar_chart(df)
     elif plot_type == 'Area Chart':
-        fig = px.area(df, x=x_axis, y=y_axis)
-    return fig
+        st.area_chart(df)
+    elif plot_type == 'Map':
+        st.map(df)
+    elif plot_type == 'Altair Chart':
+        st.altair_chart(chart)  # Assuming `chart` is defined elsewhere
+    elif plot_type == 'Bokeh Chart':
+        st.bokeh_chart(fig)  # Assuming `fig` is defined elsewhere
+    elif plot_type == 'Graphviz Chart':
+        st.graphviz_chart(fig)  # Assuming `fig` is defined elsewhere
+    elif plot_type == 'Plotly Chart':
+        st.plotly_chart(fig)  # Assuming `fig` is defined elsewhere
+    elif plot_type == 'Pydeck Chart':
+        st.pydeck_chart(chart)  # Assuming `chart` is defined elsewhere
+    elif plot_type == 'Pyplot Chart':
+        st.pyplot(fig)  # Assuming `fig` is defined elsewhere
+    elif plot_type == 'Vega Lite Chart':
+        st.vega_lite_chart(df)
 
 # Inject custom Bootstrap-like CSS
 custom_css = """
@@ -111,7 +125,9 @@ if uploaded_file is not None:
         st.write(df.nunique())
 
     st.sidebar.subheader("Data Visualization")
-    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Area Chart', 'Heatmap']
+    plot_types = ['Bar Chart', 'Line Chart', 'Scatter Plot', 'Histogram', 'Box Plot', 'Pie Chart', 'Heatmap', 'Area Chart',
+                  'Map', 'Altair Chart', 'Bokeh Chart', 'Graphviz Chart', 'Plotly Chart', 'Pydeck Chart', 'Pyplot Chart',
+                  'Vega Lite Chart']
     plot_choice = st.sidebar.selectbox("Choose plot type", plot_types)
     x_axis = st.selectbox('Select X-axis', df.columns)
     y_axis = None
@@ -120,4 +136,3 @@ if uploaded_file is not None:
     if st.button('Generate Plot'):
         fig = create_plot(df, plot_choice, x_axis, y_axis)
         st.plotly_chart(fig, use_container_width=True)
-
