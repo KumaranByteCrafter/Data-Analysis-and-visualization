@@ -126,6 +126,7 @@ if uploaded_file is not None:
 
     st.sidebar.subheader("Data Visualization")
     if st.sidebar.button("Visualize with interactive"):
-        pyg_html = pyg.to_html(df)
+        #pyg_html = pyg.to_html(df)
+        df_html = df.to_html()
         # Embed  html into the Streamlit
-        components.html(pyg_html, height=1000,width=1000,scrolling=True)
+        components.html(df_html, height=1000,width=1000,scrolling=True)
