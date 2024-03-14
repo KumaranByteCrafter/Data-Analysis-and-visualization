@@ -2,8 +2,10 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
-from ydata_profiling import ProfileReport
-from streamlit_pandas_profiling import st_profile_report
+import pygwalker as pyg
+import streamlit.components.v1 as components
+import json
+
 # Function to preprocess data
 def preprocess_data(df):
     # Fill missing values and remove duplicates
@@ -124,5 +126,4 @@ if uploaded_file is not None:
     if st.sidebar.button("Explore Data"):
         profile = ProfileReport(df, title="Data Profiling Report")
         st_profile_report(profile)
-
 
