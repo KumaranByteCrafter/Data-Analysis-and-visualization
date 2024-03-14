@@ -123,8 +123,8 @@ if uploaded_file is not None:
     if st.button('Generate Plot'):
         fig = create_plot(df, plot_choice, x_axis, y_axis)
         st.plotly_chart(fig, use_container_width=True)
+    if st.sidebar.button("Explore Data"):
+        profile = ProfileReport(df, title="Data Profiling Report")
+        st_profile_report(profile)
 
-    #st.sidebar.subheader("Data Visualization with PyGWalker")
-    #if st.sidebar.button("Visualize with PyGWalker"):
-        #pyg_html = pyg.to_html(df)
-        #components.html(pyg_html, height=1000, scrolling=True)
+
