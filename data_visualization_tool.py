@@ -63,7 +63,7 @@ highlighted_title = "<div style='background-color: #007bff; color: white; paddin
                     "</div>"
 st.markdown(highlighted_title, unsafe_allow_html=True)
 
-st.markdown("<div style='text-align: center; margin-bottom: 20px;'>Developed by Kumaran R</div>", unsafe_allow_html=True)
+#st.markdown("<div style='text-align: center; margin-bottom: 20px;'>Developed by Kumaran R</div>", unsafe_allow_html=True)
 
 uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"])
 if uploaded_file is not None:
